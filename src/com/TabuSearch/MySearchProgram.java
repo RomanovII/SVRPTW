@@ -75,10 +75,13 @@ public class MySearchProgram implements TabuSearchListener{
 			// set the new best to the current one
 			tabuSearch.setBestSolution(sol);
 			if (trnCost) {
-				System.out.println("It " + tabuSearch.getIterationsCompleted() +" - New transportation cost " + sol.getCost().total);
+				System.out.printf("It " + tabuSearch.getIterationsCompleted() +" - New transportation cost ");
+				System.out.printf("%.2f\n", sol.getCost().total);
 			} else {
-				System.out.println("It " + tabuSearch.getIterationsCompleted() +" - New weighted cost " + sol.getCost().totalWeightedCost);
+				System.out.printf("It " + tabuSearch.getIterationsCompleted() +" - New weighted cost ");
+				System.out.printf("%.2f\n", sol.getCost().totalWeightedCost);
 			}
+			
 			numberFeasibleSol++;
 		}
 		sol.updateParameters(sol.getObjectiveValue()[3], sol.getObjectiveValue()[4]);
