@@ -4,43 +4,37 @@ import heneticmethod.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import org.apache.commons.math3.distribution.GammaDistribution;
 /**
  * Instance class holds all the information about the problem, customers, depots, vehicles.
  * It offers functions to grab all the data from a file print it formated and all the function
  * needed for the initial solution.
  */
 public class Instance {
+	private static Instance instance = new Instance();
+
+	private ArrayList<Customer> sortCustomers 	= new ArrayList<>();
+	private ArrayList<Customer> allCustomers 	= new ArrayList<>();
+	private Random random = new Random();
+	private Parameters parameters;
+	private Depot depot;
 	private int vehiclesNr;
 	private int customersNr;
-	private ArrayList<Customer> sortCustomers 	= new ArrayList<>(); 		// vector of customers;
-	private ArrayList<Customer> allCustomers 	= new ArrayList<>();
-	private Depot depot;
-	private double capacity;
-	private double[][] distance;
-	private double[][] time;
-	private double[][] velocity;
-	private Random random 					= new Random();
-	private Parameters parameters;
+	private int[][] distance;
+	private int[][] time;
+	private double vechiclesCapacity;
 
-	public Instance(Parameters parameters) 
-	{
-		this.setParameters(parameters);
-		// set the random seed if passed as parameter
-		if(parameters.getRandomSeed() != -1)
-			random.setSeed(parameters.getRandomSeed());
+	private Instance(){
+		this.parameters = new Parameters();
+	}
+	
+	public static Instance getInstance() {
+		return instance;
 	}
 
-	
-	/**
-	 * Read from arg the problem data: D and Q, customers data and depots data.
-	 * After the variables are populated calculates the distances, assign
-	 * customers to depot and calculates angles
-	 * 
-	 * @param filename
-	 */
 	public void populate(Matrix matrix) {
 		vehiclesNr = matrix.maxCars;
-		capacity = matrix.MaxMoney;
+		vechiclesCapacity = matrix.MaxMoney;
 		customersNr = matrix.distanceCoeffs.length - 1;
 		
 		distance = matrix.distanceCoeffs;
@@ -48,8 +42,8 @@ public class Instance {
 		
 		depot = new Depot();
 		depot.setNumber(0);
-		depot.setStartTW(matrix.getTimeWindow(0).StartWork);
-		depot.setEndTW(matrix.getTimeWindow(0).EndWork);
+		depot.setStartTw(matrix.getTimeWindow(0).StartWork);
+		depot.setEndTw(matrix.getTimeWindow(0).EndWork);
 		depot.setENC(matrix.ENC[0]);
 
 		for (int i = 1; i < customersNr; ++i) {
@@ -61,14 +55,10 @@ public class Instance {
 			customer.setEndTw(matrix.getTimeWindow(i).EndWork);
 			customer.setServiceDuration(matrix.serviceTime[i]);
 			customer.setDistanceFromDepot(distance[i][0]);
-			
-			customer.setArriveTime(distance[i][0]); //WHAT?
-			
+					
 			sortCustomers.add(customer);
 			allCustomers.add(customer);
 		}
-
-		calculateVelocity();
 		assignCustomersToDepots();
 		Collections.sort(sortCustomers, new CompareDistances());
 	}
@@ -84,19 +74,18 @@ public class Instance {
 		}
 	}
 	
-
 	/**
-	 * Calculate the matrix of velocity
+	 * @return the distance necessary to travel from node 1 to node 2
 	 */
-	public void calculateVelocity() 
-	{
-		for (int i = 0; i  < customersNr; ++i)
-		{
-			for (int j = 0; j < customersNr; ++j)
-			{
-				velocity[i][j] = distance[i][j] / time[i][j];
-			}
-		}
+	public double getDistance(int i, int j) {
+		return distance[i][j];
+	}
+	
+	/**
+	 * @return the time necessary to travel from node 1 to node 2
+	 */
+	public double getTime(int i, int j) {
+		return time[i][j];
 	}
 	
 	/**
@@ -128,12 +117,12 @@ public class Instance {
 		this.random = random;
 	}
 
-	/**
-	 * @return the precision
-	 */
-	public double getPrecision(){
-		return parameters.getPrecision();
-	}
+//	/**
+//	 * @return the precision
+//	 */
+//	public double getPrecision(){
+//		return parameters.getPrecision();
+//	}
 	
 	/**
 	 * @return the depot
@@ -145,8 +134,8 @@ public class Instance {
 	/**
 	 * @return the capacity
 	 */
-	public double getCapacity() {
-		return capacity;
+	public double getVechileCapacity() {
+		return vechiclesCapacity;
 	}
 	
 	/**
@@ -170,13 +159,78 @@ public class Instance {
 		return sortCustomers;
 	}
 	
+	public double getCoefDelay() {
+		return parameters.getCoefDelay();
+	}
+
+	public double getCoefEarliness() {
+		return parameters.getCoefEarliness();
+	}
+
+	public double getCoefDistance() {
+		return parameters.getCoefDistance();
+	}
+
+	public double getCoefOvertime() {
+		return parameters.getCoefOvertime();
+	}
+
+	public double getCoefVechile() {
+		return parameters.getCoefVechile();
+	}
+	
+	public boolean getFlagTotal() {
+		return parameters.getFlagTotal();
+	}
+	
+	public void setFlagTotal(boolean flagTotal) {
+		parameters.setFlagTotal(flagTotal);
+	}
+
+	public double getCoefService() {
+		return parameters.getCoefService();
+	}
+	
+	public void setCoefService(double coefService) {
+		parameters.setCoefService(coefService);
+	}
+
+	public double getCoefTransportation() {
+		return parameters.getCoefTransportation();
+	}
+	
+	public void setCoefTransportation(double coefTransportation) {
+		parameters.setCoefTransportation(coefTransportation);
+	}
+
+	public double getCoefRho() {
+		return parameters.getCoefRho();
+	}
+	
+	public void setCoefRho(double coefRho) {
+		parameters.setCoefRho(coefRho);
+	}
+	
+	public double getShape() {
+		return parameters.getShape();
+	}
+	
+	public double getScale() {
+		return parameters.getScale();
+	}
+	
+	public double getGamma(double shape, double scale, double value) {
+		GammaDistribution gd = new GammaDistribution(shape, scale);
+		return gd.cumulativeProbability(value);
+	}
+	
 	/**
 	 * @return all the customers as string
 	 */
 	public String printCustomers() {
 		StringBuffer print = new StringBuffer();
 		for (int i = 0; i < customersNr; ++i) {
-			print.append(customers.get(i));
+			print.append(sortCustomers.get(i));
 		}
 		return print.toString();
 	}
