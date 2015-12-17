@@ -2,8 +2,6 @@ package tabu;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 
 import org.coinor.opents.Move;
 import org.coinor.opents.MoveManager;
@@ -15,46 +13,15 @@ import svrptw.Route;
 
 @SuppressWarnings("serial")
 public class MyMoveManager implements MoveManager {
-	private static Instance instance;
-	private MovesType movesType;
+	private Instance instance = Instance.getInstance();
 
-	public MyMoveManager(Instance instance) {
-		MyMoveManager.setInstance(instance);
+	public MyMoveManager() {
 	}
 
 	@Override
 	public Move[] getAllMoves(Solution solution) {
 		MySolution sol = ((MySolution)solution);
-		switch(movesType)
-		{
-		case RELOCATE:
-			return getRelocateMoves(sol);
-		case SWAP:
-			return getSwapMoves(sol);				
-		default:
-			return getRelocateMoves(sol);
-		}
-	}
-
-	public Move[] getSwapMoves(MySolution solution){
-		ArrayList<Route> routes = solution.getRoutes();
-		Move[] buffer = new Move[ getInstance().getCustomersNr() * getInstance().getVehiclesNr() ];
-		int nextBufferPos = 0;
-		for (int j = 0; j < routes.size(); ++j) { // for each route 
-			for (int k = 0; k < routes.get(j).getCustomersLength(); ++k) { // for each customer of the route
-				for(int l = 0; l < routes.size(); ++l){ // for all the other routes 
-					// if it's not the same route
-					if(j!=l){
-						Customer customer = routes.get(j).getCustomer(k);
-						buffer[nextBufferPos++] = new MySwapMove(getInstance(), customer, j, k, l);
-					}
-				}
-			}
-		}
-		// Trim buffer
-		Move[] moves = new Move[ nextBufferPos];
-		System.arraycopy( buffer, 0, moves, 0, nextBufferPos );
-		return moves;
+		return getRelocateMoves(sol);
 	}
 
 	private Move[] getRelocateMoves(MySolution sol) {
@@ -77,7 +44,7 @@ public class MyMoveManager implements MoveManager {
 					if(customerRouteindex != thisRouteIndex){
 						insertPositionIndex= insertBestTravel(routes.get(i), customer);
 						deletePositionIndex = sol.getRoute(customerRouteindex).getCustomers().indexOf(customer);
-						buffer[nextBufferPos++] =  new MyRelocateMove(instance, customer, customerRouteindex,  deletePositionIndex, thisRouteIndex , insertPositionIndex);
+						buffer[nextBufferPos++] =  new MyRelocateMove(customer, customerRouteindex,  deletePositionIndex, thisRouteIndex , insertPositionIndex);
 					}
 				}
 			}
@@ -92,14 +59,12 @@ public class MyMoveManager implements MoveManager {
 		ArrayList<Customer> list = new ArrayList<Customer>();
 		ArrayList<Customer> cust= (ArrayList<Customer>) route.getCustomers();
 
-		for (int i=0; i<route.getCustomersLength();i++){ // per ogni customer nella rotta
+		for (int i=0; i<route.getCustomersLength();i++){
 			Customer k = cust.get(i);
-			ArrayList<Customer> orderedList= instance.calculateAnglesToCustomer(k);
-			list.addAll(orderedList.subList(0, instance.getCustomersNr()/2)); //prendi gli n customer vicini		
+			ArrayList<Customer> orderedList = instance.calculateTimeToCustomer(k);
+			list.addAll(orderedList.subList(0, instance.getCustomersNr()/2));		
 		}
 
-
-		// add elements to al, including duplicates
 		HashSet<Customer> hs = new HashSet<Customer>();
 		hs.addAll(list);
 		list.clear();
@@ -108,27 +73,8 @@ public class MyMoveManager implements MoveManager {
 		return list;
 
 	}
-
-	public int getPositionInRoute(Customer deletedCustomer, MySolution sol)
-	{
-		int position = 0;
-		int routeIndex = deletedCustomer.getRouteIndex();
-
-		if(routeIndex>0)
-		{
-			List<Customer> lista = sol.getRoute(routeIndex).getCustomers();
-
-			for(Customer c : lista)
-			{
-				if(c.getNumber() == deletedCustomer.getNumber())
-					break;
-
-				position++;
-			}
-		}
-		return position;
-	}
-	private int insertBestTravel(Route route, Customer customerChosenPtr) {
+	
+	private int insertBestTravel(Route route, Customer customerChosenPtr) { //WHAT?
 		double minCost = Double.MAX_VALUE;
 		double tempMinCost = Double.MAX_VALUE;
 		int position = 0;
@@ -143,9 +89,9 @@ public class MyMoveManager implements MoveManager {
 		 */
 		if(customerChosenPtr.getEndTw() <= route.getCustomer(0).getEndTw()) 
 		{
-			tempMinCost = instance.getTravelTime(route.getDepotNr(), customerChosenPtr.getNumber()) 
-					+ instance.getTravelTime(customerChosenPtr.getNumber(), route.getFirstCustomerNr()) 
-					- instance.getTravelTime(route.getDepotNr(), route.getFirstCustomerNr());
+			tempMinCost = instance.getDistance(route.getDepotNr(), customerChosenPtr.getNumber()) 
+					+ instance.getDistance(customerChosenPtr.getNumber(), route.getFirstCustomerNr()) 
+					- instance.getDistance(route.getDepotNr(), route.getFirstCustomerNr());
 			if(minCost > tempMinCost) {
 				minCost = tempMinCost;
 				position = 0;
@@ -156,9 +102,9 @@ public class MyMoveManager implements MoveManager {
 		//If the tw from last customer of the routes inserted is lower than the current tw
 		//then do the same as above
 		if(route.getCustomer(route.getCustomersLength() - 1).getEndTw() <= customerChosenPtr.getEndTw()){
-			tempMinCost = instance.getTravelTime(route.getLastCustomerNr(), customerChosenPtr.getNumber()) 
-					+ instance.getTravelTime(customerChosenPtr.getNumber(), route.getDepotNr()) 
-					- instance.getTravelTime(route.getLastCustomerNr(), route.getDepotNr());
+			tempMinCost = instance.getDistance(route.getLastCustomerNr(), customerChosenPtr.getNumber()) 
+					+ instance.getDistance(customerChosenPtr.getNumber(), route.getDepotNr()) 
+					- instance.getDistance(route.getLastCustomerNr(), route.getDepotNr());
 			if(minCost > tempMinCost) {
 				minCost = tempMinCost;
 				position = route.getCustomersLength();
@@ -169,9 +115,9 @@ public class MyMoveManager implements MoveManager {
 		for(int i = 0; i < route.getCustomersLength() - 1; ++i) 
 		{
 			if(route.getCustomer(i).getEndTw() <= customerChosenPtr.getEndTw() && customerChosenPtr.getEndTw() <= route.getCustomer(i + 1).getEndTw()) {
-				tempMinCost = instance.getTravelTime(route.getCustomerNr(i), customerChosenPtr.getNumber()) 
-						+ instance.getTravelTime(customerChosenPtr.getNumber(), route.getCustomerNr(i + 1)) 
-						- instance.getTravelTime(route.getCustomerNr(i), route.getCustomerNr(i + 1));
+				tempMinCost = instance.getDistance(route.getCustomerNr(i), customerChosenPtr.getNumber()) 
+						+ instance.getDistance(customerChosenPtr.getNumber(), route.getCustomerNr(i + 1)) 
+						- instance.getDistance(route.getCustomerNr(i), route.getCustomerNr(i + 1));
 				if(minCost > tempMinCost) {
 					minCost = tempMinCost;
 					position = i + 1;
@@ -181,44 +127,4 @@ public class MyMoveManager implements MoveManager {
 		return position;
 	}
 
-	public Customer insertNewCustomer(Route routeD, Route routeI, Customer customer)
-	{
-		Random random = new Random();
-		List<Customer> customersRouteI = routeI.getCustomers();
-		Customer k = new Customer();
-		int length, custIndex; 
-		int a = 0;
-
-		while(a==0)
-		{
-			length = customersRouteI.size();
-			if(length==1)
-				break;
-			length = random.nextInt(length);
-			custIndex = customersRouteI.get(length).getNumber();
-
-			if(custIndex != customer.getNumber())
-			{
-				a++;
-				k = customersRouteI.get(length);
-			}
-		}
-		return k;
-	}
-
-	public static Instance getInstance() {
-		return instance;
-	}
-
-	public static void setInstance(Instance instance) {
-		MyMoveManager.instance = instance;
-	}
-
-	public MovesType getMovesType() {
-		return movesType;
-	}
-
-	public void setMovesType(MovesType movesType) {
-		this.movesType = movesType;
-	}
 }

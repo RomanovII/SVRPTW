@@ -13,6 +13,7 @@ import svrptw.Vehicle;
 
 @SuppressWarnings("serial")
 public class MySolution extends SolutionAdapter {
+	private Instance instance = Instance.getInstance();
 	private ArrayList<Route> routes;
 	private Cost cost;
 
@@ -27,7 +28,6 @@ public class MySolution extends SolutionAdapter {
 	}
 
 	public void initializeRoutes() {
-		Instance instance = Instance.getInstance();
 		int vehiclesNr = instance.getVehiclesNr();
 		routes = new ArrayList<Route>(vehiclesNr);
 		for (int j = 0; j < vehiclesNr; ++j) {
@@ -44,16 +44,35 @@ public class MySolution extends SolutionAdapter {
 	}
 
 	// This is needed for tabu search
-	public Object clone() {
+	public Object clone() { //WHAT?
 		MySolution copy = (MySolution) super.clone();
 		copy.cost = new Cost(this.cost);
 		copy.routes = new ArrayList<Route>(this.routes);
 		return copy;
 	}
+	
+	public void updateParameters(double a, double b) {
+		// capacity violation test
+		if (a == 0) {
+			alpha = alpha / (1 + delta);
+		} else {
+			alpha = alpha * (1 + delta);
+			if(alpha > upLimit){
+				alpha = resetValue;
+			}
+		}
+		// time window violation test
+		if (b == 0) {
+			gamma = gamma / (1 + delta);
+		} else {
+			gamma = gamma * (1 + delta);
+			if(gamma > upLimit){
+				gamma = resetValue;
+			}
+		}
+	}
 
 	public void buildInitialRoutes() {
-		Instance instance = Instance.getInstance();
-
 		ArrayList<Customer> unroutedCustomers = new ArrayList<Customer>(instance.getSortedCustomers());
 
 		int routeIndex = 0;
@@ -88,7 +107,6 @@ public class MySolution extends SolutionAdapter {
 	}
 
 	private void evaluateRoute(Route route) { // WHAT?
-		Instance instance = Instance.getInstance();
 		route.getCost().clear();
 
 		if (route.isEmpty()) {
@@ -100,7 +118,7 @@ public class MySolution extends SolutionAdapter {
 			int numCust = cust.getNumber();
 			int numPrevCust = prevCust.getNumber();
 
-			double distance = cost.getDistance() + instance.getDistance(numPrevCust, numCust);
+			double distance = prevCust.getCost().getDistance() + instance.getDistance(numPrevCust, numCust);
 			double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
 
 			double shape = instance.getShape() * instance.getTime(numPrevCust, numCust);
@@ -147,7 +165,7 @@ public class MySolution extends SolutionAdapter {
 		int numCust = cust.getNumber();
 		int numPrevCust = prevCust.getNumber();
 
-		double distance = cost.getDistance() + instance.getDistance(numPrevCust, numCust);
+		double distance = prevCust.getCost().getDistance() + instance.getDistance(numPrevCust, numCust);
 		double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
 
 		double shape = instance.getShape() * instance.getTime(numPrevCust, numCust);
@@ -157,9 +175,9 @@ public class MySolution extends SolutionAdapter {
 		double varianceTime = prevCust.getCost().getVarianceTime() + shape * scale * scale;
 
 		int totalServiceTime = prevCust.getCost().getTotalServiceTime();
-		int lowerBound = cust.getStartTw();
+//		int lowerBound = cust.getStartTw();
 		int upperBound = cust.getEndTw();
-		int shiftedLowerBound = lowerBound - totalServiceTime;
+//		int shiftedLowerBound = lowerBound - totalServiceTime;
 		int shiftedUpperBound = upperBound - totalServiceTime;
 
 		double delay = prevCust.getCost().getDelay();
@@ -173,12 +191,12 @@ public class MySolution extends SolutionAdapter {
 		}
 
 		double earliness = prevCust.getCost().getEarliness();
-		if (lowerBound <= totalServiceTime) {
-			earliness += 0;
-		} else {
-			earliness += shiftedLowerBound * instance.getGamma(shape, scale, shiftedLowerBound)
-					- shape * scale * instance.getGamma(shape + 1, scale, shiftedLowerBound);
-		}
+//		if (lowerBound <= totalServiceTime) {
+//			earliness += 0;
+//		} else {
+//			earliness += shiftedLowerBound * instance.getGamma(shape, scale, shiftedLowerBound)
+//					- shape * scale * instance.getGamma(shape + 1, scale, shiftedLowerBound);
+//		}
 
 		totalServiceTime += cust.getServiceDuration();
 

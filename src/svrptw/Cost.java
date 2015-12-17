@@ -5,6 +5,7 @@ package svrptw;
  * has total which is the sum of travel, capacityViol, durationViol, twViol.
  */
 public class Cost {
+	private Instance instance = Instance.getInstance();
 	private double capacity;
 	private double delay;
 	private double earliness;
@@ -122,16 +123,18 @@ public class Cost {
 	public double getTotalCost() {
 		return this.totalCost;
 	}
+	
+	public void setTotalCost(double totalCost) {
+		this.totalCost = totalCost;
+	}
 
 	public void calculateServiceCost() {
-		Instance instance = Instance.getInstance();
 		double coefDelay = instance.getCoefDelay();
 		double coefEarliness = instance.getCoefEarliness();
 		this.servCost = coefDelay * this.delay + coefEarliness * this.earliness;
 	}
 
 	public void calculateTransportationCost() {
-		Instance instance = Instance.getInstance();
 		double coefDistance = instance.getCoefDistance();
 		double coefOvertime = instance.getCoefOvertime();
 		double coefVechile = instance.getCoefVechile();
@@ -139,7 +142,6 @@ public class Cost {
 	}
 
 	public void calculateTotalCost() {
-		Instance instance = Instance.getInstance();
 		boolean flagTotal = instance.getFlagTotal();
 		double coefServ = instance.getCoefService();
 		double coefTran = instance.getCoefTransportation();
@@ -175,5 +177,9 @@ public class Cost {
 
 	public void setTotalServiceTime(int serviceTime) {
 		this.serviceTime = serviceTime;
+	}
+	
+	public boolean checkFeasible() {
+		return true;
 	}
 }

@@ -45,8 +45,9 @@ public class Instance {
 		depot.setStartTw(matrix.getTimeWindow(0).StartWork);
 		depot.setEndTw(matrix.getTimeWindow(0).EndWork);
 		depot.setENC(matrix.ENC[0]);
-
-		for (int i = 1; i < customersNr; ++i) {
+		allCustomers.add(depot);
+		
+		for (int i = 1; i <= customersNr; ++i) {
 			Customer customer = new Customer();
 			customer.setNumber(i);
 			customer.setENC(matrix.ENC[i]);
@@ -54,7 +55,7 @@ public class Instance {
 			customer.setStartTw(matrix.getTimeWindow(i).StartWork);
 			customer.setEndTw(matrix.getTimeWindow(i).EndWork);
 			customer.setServiceDuration(matrix.serviceTime[i]);
-			customer.setDistanceFromDepot(distance[i][0]);
+			customer.setDistanceFromDepot(distance[0][i]);
 					
 			sortCustomers.add(customer);
 			allCustomers.add(customer);
@@ -117,12 +118,12 @@ public class Instance {
 		this.random = random;
 	}
 
-//	/**
-//	 * @return the precision
-//	 */
-//	public double getPrecision(){
-//		return parameters.getPrecision();
-//	}
+	/**
+	 * @return the precision
+	 */
+	public double getPrecision(){
+		return parameters.getPrecision();
+	}
 	
 	/**
 	 * @return the depot
@@ -222,6 +223,14 @@ public class Instance {
 	public double getGamma(double shape, double scale, double value) {
 		GammaDistribution gd = new GammaDistribution(shape, scale);
 		return gd.cumulativeProbability(value);
+	}
+	
+	public ArrayList<Customer> calculateTimeToCustomer(Customer c) {
+		@SuppressWarnings("unchecked")
+		ArrayList<Customer> list = (ArrayList<Customer>) allCustomers.clone();
+		
+		Collections.sort(list, new CompareTime(c.getNumber()));
+		return list;
 	}
 	
 	/**

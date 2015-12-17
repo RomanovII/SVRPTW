@@ -13,7 +13,7 @@ public class MySearchProgram implements TabuSearchListener{
 	private static int iterationsDone;
 	public TabuSearch tabuSearch;
 	private MySolution sol;
-	public Instance instance;
+	private Instance instance = Instance.getInstance();
 	public ArrayList<Route> feasibleRoutes; 	 // stores the routes of the feasible solution if any
 	public Cost feasibleCost;		 // stores the total cost of feasible solution if any, otherwise totalcostviol = Double.Infinity
 	public ArrayList<Route> bestRoutes;	 	 // stores the routes of with the best travel time
@@ -26,20 +26,17 @@ public class MySearchProgram implements TabuSearchListener{
 	public MyMoveManager manager;
 	public DecimalFormat df = new DecimalFormat("#.##");
 	public int  counter;
-	public boolean trnCost;
 
-	public MySearchProgram(Instance instance, Solution initialSol, MoveManager moveManager, ObjectiveFunction objFunc, TabuList tabuList, boolean minmax, PrintStream outPrintStream, boolean trnCost)
+	public MySearchProgram(Solution initialSol, MoveManager moveManager, ObjectiveFunction objFunc, TabuList tabuList, boolean minmax, PrintStream outPrintStream)
 	{
 		tabuSearch = new SingleThreadedTabuSearch(initialSol, moveManager, objFunc,tabuList,	new BestEverAspirationCriteria(), minmax );
 		feasibleIndex = -1;
 		bestIndex = 0;
 		numberFeasibleSol = 0;
-		this.instance = instance;
 		MySearchProgram.setIterationsDone(0);
 		tabuSearch.addTabuSearchListener( this );
 		tabuSearch.addTabuSearchListener((MyTabuList)tabuList);
 		this.manager = (MyMoveManager) moveManager;
-		this.trnCost = trnCost; 
 	}
 
 	public void improvingMoveMade(TabuSearchEvent event) {}
@@ -67,18 +64,12 @@ public class MySearchProgram implements TabuSearchListener{
 		currentCost = getCostFromObjective(sol.getObjectiveValue());
 
 		MySearchProgram.iterationsDone += 1;
-		if(currentCost.checkFeasible() && (trnCost && currentCost.total < feasibleCost.total - instance.getPrecision() 
-				|| !trnCost && currentCost.totalWeightedCost < feasibleCost.totalWeightedCost - instance.getPrecision()))
+		if(currentCost.checkFeasible() && (currentCost.getTotalCost() < feasibleCost.getTotalCost() - instance.getPrecision()))
 		{
 			feasibleCost = currentCost;
 			feasibleRoutes = cloneRoutes(sol.getRoutes());
 			// set the new best to the current one
 			tabuSearch.setBestSolution(sol);
-			if (trnCost) {
-				System.out.println("It " + tabuSearch.getIterationsCompleted() +" - New transportation cost " + sol.getCost().total);
-			} else {
-				System.out.println("It " + tabuSearch.getIterationsCompleted() +" - New weighted cost " + sol.getCost().totalWeightedCost);
-			}
 			numberFeasibleSol++;
 		}
 		sol.updateParameters(sol.getObjectiveValue()[3], sol.getObjectiveValue()[4]);
@@ -100,7 +91,7 @@ public class MySearchProgram implements TabuSearchListener{
 		bestCost = getCostFromObjective(sol.getObjectiveValue());
 		feasibleCost = bestCost;
 		if (!feasibleCost.checkFeasible()) {
-			feasibleCost.total = Double.POSITIVE_INFINITY;
+			feasibleCost.setTotalCost(Double.POSITIVE_INFINITY);
 		}
 		feasibleRoutes = cloneRoutes(sol.getRoutes());
 		bestRoutes = feasibleRoutes;
@@ -109,9 +100,9 @@ public class MySearchProgram implements TabuSearchListener{
 	@Override
 	public void tabuSearchStopped(TabuSearchEvent event) {
 		sol    = ((MySolution)tabuSearch.getBestSolution());
-		if (feasibleCost.total != Double.POSITIVE_INFINITY) {
+		if (feasibleCost.getTotalCost() != Double.POSITIVE_INFINITY) {
 			sol.setCost(feasibleCost);
-			sol.setRoute(feasibleRoutes);
+			sol.setRoutes(feasibleRoutes);
 			tabuSearch.setBestSolution(sol);
 		}
 	}
@@ -119,8 +110,6 @@ public class MySearchProgram implements TabuSearchListener{
 	@Override
 	public void unimprovingMoveMade(TabuSearchEvent event) {
 		counter++;
-		if(iterationsDone>= instance.getParameters().getIterations()/3)
-			manager.setMovesType(MovesType.SWAP);
 	}
 
 	// return a new created cost from the objective vector passed as parameter

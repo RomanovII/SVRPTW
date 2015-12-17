@@ -8,11 +8,10 @@ import svrptw.Instance;
 public class MyTabuList extends ComplexTabuList implements TabuSearchListener{
 	private int counter;
 	private int reset=7;
-	private Instance instance;
+	private Instance instance = Instance.getInstance();
 
-	public MyTabuList(int tenure, int[] attrDim, Instance instance) {
+	public MyTabuList(int tenure, int[] attrDim) {
 		super(tenure, attrDim.length);
-		this.instance= instance;
 	}
 
 	@Override

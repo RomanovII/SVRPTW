@@ -11,15 +11,12 @@ import svrptw.Route;
 
 @SuppressWarnings("serial")
 public class MyObjectiveFunction implements ObjectiveFunction {
-	private static Instance instance;
+	private Instance instance = Instance.getInstance();
 	private double lambda;
-	private boolean transportCostFlag;
 
-	public MyObjectiveFunction(Instance instance, boolean trCostFlag) {
-		MyObjectiveFunction.setInstance(instance);
+	public MyObjectiveFunction() {
 		lambda = 0.5 * Math.sqrt(instance.getVehiclesNr()
 				* instance.getCustomersNr());
-		transportCostFlag = trCostFlag;
 	} // end constructor
 
 	/**
@@ -718,19 +715,4 @@ public class MyObjectiveFunction implements ObjectiveFunction {
 		varCost.setLoadViol(Math.max(0, varCost.load - route.getLoadAdmited()));
 		return varCost;
 	} // end method evaluate delete route
-
-	/**
-	 * @return the instance
-	 */
-	public static Instance getInstance() {
-		return instance;
-	}
-
-	/**
-	 * @param instance
-	 *            the instance to set
-	 */
-	public static void setInstance(Instance instance) {
-		MyObjectiveFunction.instance = instance;
-	}
 } // end class MyObjectiveFunction

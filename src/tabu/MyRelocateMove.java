@@ -9,7 +9,7 @@ import svrptw.Route;
 
 @SuppressWarnings("serial")
 public class MyRelocateMove implements ComplexMove {
-	private Instance instance;
+	private Instance instance = Instance.getInstance();
 	private Customer customer;
 	private int deleteDepotNr;
 	private int deleteRouteNr;
@@ -18,9 +18,8 @@ public class MyRelocateMove implements ComplexMove {
 	private int insertRouteNr;
 	private int insertPositionIndex;
 
-	public MyRelocateMove( Instance instance, Customer customer, int deleteRouteNr, int deletePositionIndex,  int insertRouteNr, int insertPositionIndex)
+	public MyRelocateMove( Customer customer, int deleteRouteNr, int deletePositionIndex,  int insertRouteNr, int insertPositionIndex)
 	{   
-		this.instance            = instance;
 		this.customer            = customer;
 		this.deleteRouteNr       = deleteRouteNr;
 		this.deletePositionIndex = deletePositionIndex;
@@ -60,31 +59,40 @@ public class MyRelocateMove implements ComplexMove {
 	public int[] attributesInsert() {
 		return new int[]{ insertDepotNr, insertRouteNr, customer.getNumber(), 0, 0};
 	}
-
-	@Override 
-	public int[] attributes() {
-		return new int[]{ insertDepotNr, insertRouteNr, customer.getNumber(), 0, 0};
-	}
 	
 	private void evaluateTotalCostVariation(MySolution sol, MyRelocateMove myRelocateMove,
 			Cost initialInsertCost, Cost initialDeleteCost) 
 	{
-		Route insertRoute = sol.getRoute(myRelocateMove.getInsertRouteNr());
-		Route deleteRoute = sol.getRoute(myRelocateMove.getDeleteRouteNr());
-		sol.addTravelTime( - initialInsertCost.travelTime - initialDeleteCost.travelTime
-				+  deleteRoute.getCost().travelTime + insertRoute.getCost().travelTime);
-		sol.addServiceTime( - initialInsertCost.serviceTime - initialDeleteCost.serviceTime
-				+ deleteRoute.getCost().serviceTime + insertRoute.getCost().serviceTime);
-		sol.addWaitingTime( - initialInsertCost.waitingTime - initialDeleteCost.waitingTime
-				+  deleteRoute.getCost().waitingTime + insertRoute.getCost().waitingTime);
-		sol.getCost().loadViol += - initialInsertCost.loadViol - initialDeleteCost.loadViol
-				+ deleteRoute.getCost().loadViol + insertRoute.getCost().loadViol;
-		sol.getCost().twViol += - initialInsertCost.twViol - initialDeleteCost.twViol
-				+ deleteRoute.getCost().twViol + insertRoute.getCost().twViol;
-		sol.getCost().waitingTime = Math.abs(sol.getCost().waitingTime) < instance.getPrecision() ? 0 : sol.getCost().waitingTime;
-		sol.getCost().loadViol = Math.abs(sol.getCost().loadViol) < instance.getPrecision() ? 0 : sol.getCost().loadViol;
-		sol.getCost().twViol = Math.abs(sol.getCost().twViol) < instance.getPrecision() ? 0 : sol.getCost().twViol;
-		sol.getCost().calculateTotal(sol.getAlpha(), sol.getBeta(), sol.getGamma());
+		Cost insertCost = sol.getRoute(myRelocateMove.getInsertRouteNr()).getCost();
+		Cost deleteCost = sol.getRoute(myRelocateMove.getDeleteRouteNr()).getCost();
+		double distance = sol.getCost().getDistance() + insertCost.getDistance() + deleteCost.getDistance()
+			- initialInsertCost.getDistance() - initialDeleteCost.getDistance();
+		double capacity = sol.getCost().getCapacity() + insertCost.getCapacity() + deleteCost.getCapacity()
+			- initialInsertCost.getCapacity() - initialDeleteCost.getCapacity();
+		double expectedTime = sol.getCost().getExpectedTime() + insertCost.getExpectedTime() + deleteCost.getExpectedTime()
+			- initialInsertCost.getExpectedTime() - initialDeleteCost.getExpectedTime();
+		double varianceTime = sol.getCost().getVarianceTime() + insertCost.getVarianceTime() + deleteCost.getVarianceTime()
+			- initialInsertCost.getVarianceTime() - initialDeleteCost.getVarianceTime();
+		int totalServiceTime = sol.getCost().getTotalServiceTime() + insertCost.getTotalServiceTime() + deleteCost.getTotalServiceTime()
+			- initialInsertCost.getTotalServiceTime() - initialDeleteCost.getTotalServiceTime();
+		double delay = sol.getCost().getDelay() + insertCost.getDelay() + deleteCost.getDelay()
+			- initialInsertCost.getDelay() - initialDeleteCost.getDelay();
+		double earliness = sol.getCost().getEarliness() + insertCost.getEarliness() + deleteCost.getEarliness()
+			- initialInsertCost.getEarliness() - initialDeleteCost.getEarliness();
+		double vechile = sol.getCost().getVechile() + insertCost.getVechile() + deleteCost.getVechile()
+			- initialInsertCost.getVechile() - initialDeleteCost.getVechile();
+		double overtime = sol.getCost().getOvertime() + insertCost.getOvertime() + deleteCost.getOvertime()
+			- initialInsertCost.getOvertime() - initialDeleteCost.getOvertime();
+		sol.getCost().setDistance(distance);
+		sol.getCost().setCapacity(capacity);
+		sol.getCost().setExpectedTime(expectedTime);
+		sol.getCost().setVarianceTime(varianceTime);
+		sol.getCost().setTotalServiceTime(totalServiceTime);
+		sol.getCost().setDelay(delay);
+		sol.getCost().setEarliness(earliness);
+		sol.getCost().setVechile(vechile);
+		sol.getCost().setOvertime(overtime);
+		sol.getCost().calculateTotalCost();
 	}
 
 	/**
@@ -100,168 +108,8 @@ public class MyRelocateMove implements ComplexMove {
 	 * @return
 	 */
 	private void evaluateInsertRoute(Route route, Customer customer, int position) {
-		Cost varCost = route.getCost();
-		double arriveCustomer = 0;
-		double arriveNextCustomer = 0;
-		double waitingTimeCustomer = 0;
-		double waitingTimeNextCustomer = 0;
-		double twViolCustomer = 0;
-		double twViolNextCustomer = 0;
-
-		// if route is empty insert: depot - customer - depot
-		if(route.isEmpty()) {
-			varCost.initialize();
-			// arrive time at the customer
-			arriveCustomer = route.getDepot().getStartTw()
-					+ instance.getTravelTime(route.getDepotNr(), customer.getNumber());
-			// waiting time for the customer if any
-			waitingTimeCustomer = Math.max(0, customer.getStartTw() - arriveCustomer);
-			// time window violation of the customer if any
-			twViolCustomer = Math.max(0, arriveCustomer - customer.getEndTw());
-			// arrive time at the depot
-			arriveNextCustomer = Math.max(customer.getStartTw(), arriveCustomer)
-					+ customer.getServiceDuration()
-					+ instance.getTravelTime(customer.getNumber(), route.getDepotNr());
-			// time window violation of the depot if any
-			twViolNextCustomer = Math.max(0, arriveNextCustomer - route.getDepot().getEndTw());
-			//variation of the travel time
-			varCost.travelTime = instance.getTravelTime(route.getDepotNr(), customer.getNumber())
-					+ instance.getTravelTime(customer.getNumber(), route.getDepotNr());
-			// variation of the capacity
-			varCost.load = customer.getCapacity();
-			// route service time
-			varCost.serviceTime = customer.getServiceDuration();
-			//variation of the waiting time
-			varCost.waitingTime = waitingTimeCustomer;
-			// variation of the time windows violation
-			varCost.twViol = twViolCustomer + twViolNextCustomer;
-			customer.setArriveTime(arriveCustomer);
-			customer.setWaitingTime(waitingTimeCustomer);
-			customer.setTwViol(twViolCustomer);
-			varCost.returnToDepotTime = arriveNextCustomer;
-			varCost.depotTwViol = twViolNextCustomer;
-		}else{    	
-			// insertion at the end of the list: customer before - customer - depot
-			if(position == route.getCustomersLength()){
-				Customer customerBefore = route.getCustomer(position - 1);
-				arriveCustomer = Math.max(customerBefore.getStartTw(), customerBefore.getArriveTime())
-						+ customerBefore.getServiceDuration()
-						+ instance.getTravelTime(customerBefore.getNumber(), customer.getNumber());
-				// waiting time for the customer if any
-				waitingTimeCustomer = Math.max(0, customer.getStartTw() - arriveCustomer);
-				// time window violation of the customer if any
-				twViolCustomer = Math.max(0, arriveCustomer - customer.getEndTw());
-				// arrive time at the depot
-				arriveNextCustomer = Math.max(customer.getStartTw(), arriveCustomer)
-						+ customer.getServiceDuration()
-						+ instance.getTravelTime(customer.getNumber(), route.getDepotNr());
-				// time window violation of the depot if any
-				twViolNextCustomer = Math.max(0, arriveNextCustomer - route.getDepot().getEndTw());
-				//variation of the travel time
-				varCost.travelTime += - instance.getTravelTime(customerBefore.getNumber(), route.getDepotNr())
-						+ instance.getTravelTime(customerBefore.getNumber(), customer.getNumber())
-						+ instance.getTravelTime(customer.getNumber(), route.getDepotNr());
-				// variation of the capacity
-				varCost.load += customer.getCapacity();
-				// route service time
-				varCost.serviceTime += customer.getServiceDuration();
-				//variation of the waiting time
-				varCost.waitingTime += waitingTimeCustomer;
-				// variation of the time windows violation
-				varCost.twViol += - varCost.depotTwViol + twViolCustomer + twViolNextCustomer;
-				customer.setArriveTime(arriveCustomer);
-				customer.setWaitingTime(waitingTimeCustomer);
-				customer.setTwViol(twViolCustomer);
-				varCost.returnToDepotTime = arriveNextCustomer;
-				varCost.depotTwViol = twViolNextCustomer;
-			}else{
-				double variation = 0;
-				Customer customerAfter = route.getCustomer(position);
-				// insertion on the first position: depot - customer - customer after
-				if(position == 0){
-					// time before arrive at the customer
-					arriveCustomer = route.getDepot().getStartTw()
-							+ instance.getTravelTime(route.getDepotNr(), customer.getNumber());
-					//variation of the travel time
-					varCost.travelTime += - instance.getTravelTime(route.getDepotNr(), customerAfter.getNumber())
-							+ instance.getTravelTime(route.getDepotNr(), customer.getNumber())
-							+ instance.getTravelTime(customer.getNumber(), customerAfter.getNumber());
-					// insertion in the middle of the list:  customer before - customer - customer after
-				}else{
-					Customer customerBefore = route.getCustomer(position - 1);
-					// time before arrive at the customer
-					arriveCustomer = Math.max(customerBefore.getStartTw(), customerBefore.getArriveTime())
-							+ customerBefore.getServiceDuration()
-							+ instance.getTravelTime(customerBefore.getNumber(), customer.getNumber());
-					//variation of the travel time
-					varCost.travelTime += - instance.getTravelTime(customerBefore.getNumber(), customerAfter.getNumber())
-							+ instance.getTravelTime(customerBefore.getNumber(), customer.getNumber())
-							+ instance.getTravelTime(customer.getNumber(), customerAfter.getNumber());
-				} // end if else beginning or middle
-				// waiting time for the customer if any
-				waitingTimeCustomer = Math.max(0, customer.getStartTw() - arriveCustomer);
-				// time window violation of the customer if any
-				twViolCustomer = Math.max(0, arriveCustomer - customer.getEndTw());
-				// before arrive time at the customer after
-				arriveNextCustomer = Math.max(customer.getStartTw(), arriveCustomer)
-						+ customer.getServiceDuration()
-						+ instance.getTravelTime(customer.getNumber(), customerAfter.getNumber());
-				// waiting time for the customer after if any
-				waitingTimeNextCustomer = Math.max(0, customerAfter.getStartTw() - arriveNextCustomer);
-				// time window violation of the customer after if any
-				twViolNextCustomer = Math.max(0, arriveNextCustomer - customerAfter.getEndTw());
-				// variation of the capacity
-				varCost.load += customer.getCapacity();
-				// route service time
-				varCost.serviceTime += customer.getServiceDuration();
-				//variation of the waiting time
-				varCost.waitingTime += - customerAfter.getWaitingTime() + waitingTimeCustomer + waitingTimeNextCustomer;
-				// variation of the time windows violation
-				varCost.twViol +=  - customerAfter.getTwViol() + twViolCustomer + twViolNextCustomer;
-				variation = arriveNextCustomer + waitingTimeNextCustomer - customerAfter.getArriveTime() - customerAfter.getWaitingTime();
-				variation = Math.abs(variation) < instance.getPrecision() ? 0 : variation;
-				customer.setArriveTime(arriveCustomer);
-				customer.setWaitingTime(waitingTimeCustomer);
-				customer.setTwViol(twViolCustomer);
-				customerAfter.setArriveTime(arriveNextCustomer);
-				customerAfter.setWaitingTime(waitingTimeNextCustomer);
-				customerAfter.setTwViol(twViolNextCustomer);
-				// if there is a variation update the nodes after too
-				int i = position + 1;
-				while (variation != 0 && i < route.getCustomersLength()){	
-					customerAfter = route.getCustomer(i);
-					// arrive at the customer after
-					arriveNextCustomer = customerAfter.getArriveTime() + variation;
-					waitingTimeNextCustomer = Math.max(0, customerAfter.getStartTw() - arriveNextCustomer);
-					twViolNextCustomer = Math.max(0, arriveNextCustomer - customerAfter.getEndTw());
-					//variation of the waiting time
-					varCost.waitingTime += - customerAfter.getWaitingTime() + waitingTimeNextCustomer;
-					// variation of the time windows violation
-					varCost.twViol += - customerAfter.getTwViol() + twViolNextCustomer;		
-					variation = arriveNextCustomer + waitingTimeNextCustomer - customerAfter.getArriveTime() - customerAfter.getWaitingTime();
-					variation = Math.abs(variation) < instance.getPrecision() ? 0 : variation;
-					customerAfter.setArriveTime(arriveNextCustomer);
-					customerAfter.setWaitingTime(waitingTimeNextCustomer);
-					customerAfter.setTwViol(twViolNextCustomer);
-					i++;
-				}// end while
-				if(i == route.getCustomersLength() && variation != 0 ){
-					// update the return to the depot
-					arriveNextCustomer = varCost.returnToDepotTime + variation;
-					twViolNextCustomer = Math.max(0, arriveNextCustomer - route.getDepot().getEndTw());
-					// variation of the time windows violation
-					varCost.twViol += - varCost.depotTwViol + twViolNextCustomer;
-					varCost.returnToDepotTime = arriveNextCustomer;
-					varCost.depotTwViol = twViolNextCustomer;
-				}// end if return to depot
-			} // end if else of position cases
-		} // end if else route is empty
 		route.addCustomer(customer, position);
-		customer.setRouteIndex(route.getIndex());
-		// be careful about precision; if there are subtraction
-		varCost.waitingTime = Math.abs(varCost.waitingTime) < instance.getPrecision() ? 0 : varCost.waitingTime;
-		varCost.twViol = Math.abs(varCost.twViol) < instance.getPrecision() ? 0 : varCost.twViol;
-		varCost.setLoadViol(Math.max(0, varCost.load - route.getLoadAdmited()));
+		evaluateRoute(route, position);
 	} // end method evaluate insert route
 
 	/**
@@ -276,119 +124,125 @@ public class MyRelocateMove implements ComplexMove {
 	 * @return
 	 */
 	private void evaluateDeleteRoute(Route route, Customer customer, int position) {
-		Cost varCost = route.getCost();
-		double arriveNextCustomer = 0;
-		double waitingTimeNextCustomer = 0;
-		double twViolNextCustomer = 0;
-
-		// if route has only the customer that will be deleted
-		if(route.getCustomersLength() - 1 == 0) {
-			varCost.initialize();    		
-		}else{    	
-			// case when customer is the last one: customer before - depot
-			if(position == route.getCustomersLength() - 1){
-				Customer customerBefore = route.getCustomer(position - 1);
-				//arrive time at the depot
-				arriveNextCustomer = Math.max(customerBefore.getStartTw(), customerBefore.getArriveTime())
-						+ customerBefore.getServiceDuration()
-						+ instance.getTravelTime(customerBefore.getNumber(), route.getDepotNr());
-				// time window violation of the depot if any
-				twViolNextCustomer = Math.max(0, arriveNextCustomer - route.getDepot().getEndTw());
-				//variation of the travel time
-				varCost.travelTime += - instance.getTravelTime(customerBefore.getNumber(), customer.getNumber())
-						- instance.getTravelTime(customer.getNumber(), route.getDepotNr())
-						+ instance.getTravelTime(customerBefore.getNumber(), route.getDepotNr());
-				// variation of the capacity
-				varCost.load -= customer.getCapacity();
-				// route service time
-				varCost.serviceTime -= customer.getServiceDuration();
-				//variation of the waiting time
-				varCost.waitingTime -= customer.getWaitingTime();
-				// variation of the time windows violation
-				varCost.twViol += - customer.getTwViol() - route.getDepotTwViol() + twViolNextCustomer;
-				varCost.returnToDepotTime = arriveNextCustomer;
-				varCost.depotTwViol = twViolNextCustomer;
-			}else{
-				double variation = 0;
-				Customer customerAfter = route.getCustomer(position + 1);
-				// delete on the first position
-				if(position == 0){
-					// time before arrive at customer after
-					arriveNextCustomer = route.getDepot().getStartTw()
-							+ instance.getTravelTime(route.getDepotNr(), customerAfter.getNumber());
-					//variation of the travel time
-					varCost.travelTime  += - instance.getTravelTime(route.getDepotNr(), customer.getNumber())
-							- instance.getTravelTime(customer.getNumber(), customerAfter.getNumber())
-							+ instance.getTravelTime(route.getDepotNr(), customerAfter.getNumber());
-					// delete in the middle of the list
-				}else{
-					Customer customerBefore = route.getCustomer(position - 1);
-					// time before arrive at customer after
-					arriveNextCustomer = Math.max(customerBefore.getStartTw(), customerBefore.getArriveTime())
-							+ customerBefore.getServiceDuration()
-							+ instance.getTravelTime(customerBefore.getNumber(), customerAfter.getNumber());
-					//variation of the travel time
-					varCost.travelTime += - instance.getTravelTime(customerBefore.getNumber(), customer.getNumber())
-							- instance.getTravelTime(customer.getNumber(), customerAfter.getNumber())
-							+ instance.getTravelTime(customerBefore.getNumber(), customerAfter.getNumber());
-				} // end if else beginning or middle
-				// waiting time for the customer after if any
-				waitingTimeNextCustomer = Math.max(0, customerAfter.getStartTw() - arriveNextCustomer);
-				// time window violation of the customer after if any
-				twViolNextCustomer = Math.max(0, arriveNextCustomer - customerAfter.getEndTw());
-				// variation of the capacity
-				varCost.load -= customer.getCapacity();
-				// route service time
-				varCost.serviceTime -= customer.getServiceDuration();
-				//variation of the waiting time
-				varCost.waitingTime += - customer.getWaitingTime() - customerAfter.getWaitingTime() + waitingTimeNextCustomer;
-				// variation of the time windows violation
-				varCost.twViol += - customer.getTwViol() - customerAfter.getTwViol() +  twViolNextCustomer;
-				variation = arriveNextCustomer + waitingTimeNextCustomer - customerAfter.getArriveTime() - customerAfter.getWaitingTime();
-				variation = Math.abs(variation) < instance.getPrecision() ? 0 : variation;
-				customerAfter.setArriveTime(arriveNextCustomer);
-				customerAfter.setWaitingTime(waitingTimeNextCustomer);
-				customerAfter.setTwViol(twViolNextCustomer);
-				// if there is a variation update the nodes after too
-				// the node after the customer is already updated
-				int i = position + 2;
-				while (variation != 0 && i < route.getCustomersLength()){	
-					customerAfter = route.getCustomer(i);
-					// arrive at the customer after
-					arriveNextCustomer = customerAfter.getArriveTime() + variation;
-					waitingTimeNextCustomer = Math.max(0, customerAfter.getStartTw() - arriveNextCustomer);
-					twViolNextCustomer = Math.max(0, arriveNextCustomer - customerAfter.getEndTw());
-					//variation of the waiting time
-					varCost.waitingTime += -customerAfter.getWaitingTime() + waitingTimeNextCustomer;
-					// variation of the time windows violation
-					varCost.twViol += -customerAfter.getTwViol() + twViolNextCustomer;
-					variation = arriveNextCustomer + waitingTimeNextCustomer - customerAfter.getArriveTime() - customerAfter.getWaitingTime();
-					variation = Math.abs(variation) < instance.getPrecision() ? 0 : variation; 
-					customerAfter.setArriveTime(arriveNextCustomer);
-					customerAfter.setWaitingTime(waitingTimeNextCustomer);
-					customerAfter.setTwViol(twViolNextCustomer);
-					i++;
-				}// end while
-				// update depot violation too if any
-				if(i == route.getCustomersLength() && variation != 0 ){
-					// update the return to the depot
-					arriveNextCustomer = route.getReturnToDepotTime() + variation;
-					twViolNextCustomer = Math.max(0, arriveNextCustomer - route.getDepot().getEndTw());
-					// variation of the time windows violation
-					varCost.twViol += - route.getDepotTwViol() + twViolNextCustomer;
-					varCost.returnToDepotTime = arriveNextCustomer;
-					varCost.depotTwViol = twViolNextCustomer;
-				}// end if return to depot
-			} // end if else of position cases
-		} // end if else route is empty
 		route.removeCustomer(position);
-		// be careful about precision; if there are subtraction
-		varCost.waitingTime = Math.abs(varCost.waitingTime) < instance.getPrecision() ? 0 : varCost.waitingTime;
-		varCost.twViol = Math.abs(varCost.twViol) < instance.getPrecision() ? 0 : varCost.twViol;
-		varCost.setLoadViol(Math.max(0, varCost.load - route.getLoadAdmited()));
+		evaluateRoute(route, position);
 	} // end method evaluate delete route
 
 
+	private void evaluateRoute(Route route, int pos) { // WHAT?
+		route.getCost().clear();
+
+		if (route.isEmpty()) {
+			return;
+		}
+		
+		Customer prevCust;
+		if (pos == 0) {
+			prevCust = instance.getDepot();
+		}
+		else {
+			prevCust = route.getCustomer(pos - 1);
+		}
+		
+		for (int i = pos; i < route.getCustomersLength(); ++i){
+			Customer cust = route.getCustomer(i);
+			int numCust = cust.getNumber();
+			int numPrevCust = prevCust.getNumber();
+
+			double distance = prevCust.getCost().getDistance() + instance.getDistance(numPrevCust, numCust);
+			double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
+
+			double shape = instance.getShape() * instance.getTime(numPrevCust, numCust);
+			double scale = instance.getScale();
+
+			double expectedTime = prevCust.getCost().getExpectedTime() + shape * scale;
+			double varianceTime = prevCust.getCost().getVarianceTime() + shape * scale * scale;
+
+			int totalServiceTime = prevCust.getCost().getTotalServiceTime();
+			int lowerBound = cust.getStartTw();
+			int upperBound = cust.getEndTw();
+			int shiftedLowerBound = lowerBound - totalServiceTime;
+			int shiftedUpperBound = upperBound - totalServiceTime;
+
+			double delay = prevCust.getCost().getDelay();
+			if (upperBound <= totalServiceTime) {
+				delay += expectedTime + totalServiceTime - upperBound;
+			} else {
+				delay += shape * scale * (1 - instance.getGamma(shape + 1, scale, shiftedUpperBound))
+						- shiftedUpperBound * (1 - instance.getGamma(shape, scale, shiftedUpperBound));
+			}
+
+			double earliness = prevCust.getCost().getEarliness();
+			if (lowerBound <= totalServiceTime) {
+				earliness += 0;
+			} else {
+				earliness += shiftedLowerBound * instance.getGamma(shape, scale, shiftedLowerBound)
+						- shape * scale * instance.getGamma(shape + 1, scale, shiftedLowerBound);
+			}
+
+			totalServiceTime += cust.getServiceDuration();
+
+			cust.getCost().setDistance(distance);
+			cust.getCost().setCapacity(capacity);
+			cust.getCost().setExpectedTime(expectedTime);
+			cust.getCost().setVarianceTime(varianceTime);
+			cust.getCost().setTotalServiceTime(totalServiceTime);
+			cust.getCost().setDelay(delay);
+			cust.getCost().setEarliness(earliness);
+			prevCust = cust;
+		}
+
+		Customer cust = instance.getDepot();
+		int numCust = cust.getNumber();
+		int numPrevCust = prevCust.getNumber();
+
+		double distance = prevCust.getCost().getDistance() + instance.getDistance(numPrevCust, numCust);
+		double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
+
+		double shape = instance.getShape() * instance.getTime(numPrevCust, numCust);
+		double scale = instance.getScale();
+
+		double expectedTime = prevCust.getCost().getExpectedTime() + shape * scale;
+		double varianceTime = prevCust.getCost().getVarianceTime() + shape * scale * scale;
+
+		int totalServiceTime = prevCust.getCost().getTotalServiceTime();
+//		int lowerBound = cust.getStartTw();
+		int upperBound = cust.getEndTw();
+//		int shiftedLowerBound = lowerBound - totalServiceTime;
+		int shiftedUpperBound = upperBound - totalServiceTime;
+
+		double delay = prevCust.getCost().getDelay();
+
+		double overtime;
+		if (upperBound <= totalServiceTime) {
+			overtime = expectedTime + totalServiceTime - upperBound;
+		} else {
+			overtime = shape * scale * (1 - instance.getGamma(shape + 1, scale, shiftedUpperBound))
+					- shiftedUpperBound * (1 - instance.getGamma(shape, scale, shiftedUpperBound));
+		}
+
+		double earliness = prevCust.getCost().getEarliness();
+//		if (lowerBound <= totalServiceTime) {
+//			earliness += 0;
+//		} else {
+//			earliness += shiftedLowerBound * instance.getGamma(shape, scale, shiftedLowerBound)
+//					- shape * scale * instance.getGamma(shape + 1, scale, shiftedLowerBound);
+//		}
+
+		totalServiceTime += cust.getServiceDuration();
+
+		route.getCost().setDistance(distance);
+		route.getCost().setCapacity(capacity);
+		route.getCost().setExpectedTime(expectedTime);
+		route.getCost().setVarianceTime(varianceTime);
+		route.getCost().setTotalServiceTime(totalServiceTime);
+		route.getCost().setDelay(delay);
+		route.getCost().setEarliness(earliness);
+		route.getCost().setVechile(1);
+		route.getCost().setOvertime(overtime);
+		route.getCost().calculateTotalCost();
+	}
+	
 	/**
 	 * This function returns a string containing the move information in readable format
 	 */

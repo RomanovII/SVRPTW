@@ -1,6 +1,7 @@
 package svrptw;
 
 public class Parameters {
+	private double 	precision;
 	private double coefDelay;
 	private double coefEarliness;
 	private double coefDistance;
@@ -14,17 +15,18 @@ public class Parameters {
 	private double scale;
 	
 	public Parameters() {
-		this.coefDelay = 0;
-		this.coefEarliness = 0;
-		this.coefDistance = 0;
-		this.coefOvertime = 0;
-		this.coefVechile = 0;
+		this.precision = 1E-2;
+		this.coefDelay = 1;
+		this.coefEarliness = 1;
+		this.coefDistance = 1;
+		this.coefOvertime = 1;
+		this.coefVechile = 1;
 		this.flagTotal = false;
-		this.coefService = 0;
-		this.coefTransportation = 0;
-		this.coefRho = 0;
-		this.shape = 0;
-		this.scale = 0;
+		this.coefService = 1;
+		this.coefTransportation = 1;
+		this.coefRho = 1;
+		this.shape = 1;
+		this.scale = 1;
 	}
 
 	public double getCoefDelay() {
@@ -113,5 +115,13 @@ public class Parameters {
 	
 	public void setScale(double scale) {
 		this.scale = scale;
+	}
+	
+	public double getPrecision() {
+		return this.precision;
+	}
+	
+	public void setPrecision(double precision) {
+		this.precision = precision;
 	}
 }

@@ -30,10 +30,6 @@ public class Route {
 		}
 	}
 
-	public double getDuration() {
-		return cost.serviceTime + cost.waitingTime;
-	}
-
 	public Customer getCustomer(int index) {
 		return this.customers.get(index);
 	}
@@ -69,19 +65,10 @@ public class Route {
 			return true;
 	}
 
-	/**
-	 * Get the customer index found at certain position in the customer list
-	 * 
-	 * @param index
-	 * @return
-	 */
 	public int getCustomerNr(int index) {
 		return this.customers.get(index).getNumber();
 	}
 
-	/**
-	 * Prints the route
-	 */
 	public String printRoute() {
 		StringBuffer print = new StringBuffer();
 		print.append("Route[" + index + ", " + (getCustomersLength()) + "]=");
@@ -101,72 +88,39 @@ public class Route {
 		StringBuffer print = new StringBuffer();
 		// print.append("\n" + "Route[" + index + "]");
 		print.append("--------------------------------------------");
-		print.append("\n" + "| Capacity=" + cost.load + " ServiceTime=" + cost.serviceTime + " TravelTime="
-				+ cost.travelTime + "\n WaitingTime=" + cost.waitingTime + " Totaltime=" + cost.total);
-		print.append("\n" + cost);
+		print.append("\n" + "| Capacity=" + cost.getCapacity());
 		print.append("\n");
 		return print.toString();
 	}
 
-	/**
-	 * @param customers
-	 *            list to set
-	 */
 	public void setCustomers(ArrayList<Customer> customers) {
 		this.customers = customers;
 	}
 
-	/**
-	 * Add a new customer to the route
-	 * 
-	 * @param customer
-	 */
 	public void addCustomer(Customer customer) {
 		customer.setRouteIndex(this.getIndex());
 		customer.setIsTaken(true);
 		this.customers.add(customer);
 	}
 
-	/**
-	 * Add a new customer to the route on specific position
-	 * 
-	 * @param node
-	 */
 	public void addCustomer(Customer customer, int index) {
 		customer.setRouteIndex(this.getIndex());
 		customer.setIsTaken(true);
 		this.customers.add(index, customer);
 	}
 
-	/**
-	 * Set the index to the route
-	 * 
-	 * @param index
-	 */
 	public void setIndex(int index) {
 		this.index = index;
 	}
 
-	/**
-	 * @param capacity
-	 *            the capacity to set
-	 */
 	public void setCapacity(double capacity) {
-		this.cost.load = capacity;
+		this.cost.setCapacity(capacity);
 	}
 
-	/**
-	 * @param cost
-	 *            the cost to set
-	 */
 	public void setCost(Cost cost) {
 		this.cost = cost;
 	}
 
-	/**
-	 * @param assignedvehicle
-	 *            the assignedvehicle to set
-	 */
 	public void setAssignedVehicle(Vehicle assignedvehicle) {
 		this.assignedVehicle = assignedvehicle;
 	}
@@ -179,30 +133,19 @@ public class Route {
 		return assignedVehicle.getCapacity();
 	}
 
-	/**
-	 * @return customers list
-	 */
 	public List<Customer> getCustomers() {
 		return this.customers;
 	}
 
-	/**
-	 * @return the index
-	 */
 	public int getIndex() {
 		return index;
 	}
 
-	/**
-	 * @return the number of nodes in the route
-	 */
 	public int getCustomersLength() {
 		return this.customers.size();
 	}
 
-	/**
-	 * @return the cost
-	 */
+
 	public Cost getCost() {
 		return this.cost;
 	}
@@ -210,35 +153,4 @@ public class Route {
 	public void initializeTimes() {
 		cost.clear();
 	}
-
-	/**
-	 * @return the depotTwViol
-	 */
-	public double getDepotTwViol() {
-		return cost.depotTwViol;
-	}
-
-	/**
-	 * @param depotTwViol
-	 *            the depotTwViol to set
-	 */
-	public void setDepotTwViol(double depotTwViol) {
-		this.cost.depotTwViol = depotTwViol;
-	}
-
-	/**
-	 * @return the returnToDepotTime
-	 */
-	public double getReturnToDepotTime() {
-		return cost.returnToDepotTime;
-	}
-
-	/**
-	 * @param returnToDepotTime
-	 *            the returnToDepotTime to set
-	 */
-	public void setReturnToDepotTime(double returnToDepotTime) {
-		this.cost.returnToDepotTime = returnToDepotTime;
-	}
-
 }
