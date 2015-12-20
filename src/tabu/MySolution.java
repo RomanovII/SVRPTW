@@ -16,6 +16,7 @@ public class MySolution extends SolutionAdapter {
 	private Instance instance = Instance.getInstance();
 	private ArrayList<Route> routes;
 	private Cost cost;
+	private double coefNu;
 
 	// public MySolution(){} //This is needed otherwise java gives random
 	// errors.. YES we love java <3
@@ -23,10 +24,18 @@ public class MySolution extends SolutionAdapter {
 	public MySolution() {
 		cost = new Cost();
 		routes = new ArrayList<Route>();
-		initializeRoutes();
-		buildInitialRoutes();
+		coefNu = 1;
 	}
 
+	// This is needed for tabu search
+	public Object clone() { // WHAT?
+		MySolution copy = (MySolution) super.clone();
+		copy.cost = new Cost(this.cost);
+		copy.routes = new ArrayList<Route>(this.routes);
+		copy.coefNu = new Double(this.coefNu);
+		return copy;
+	}
+	
 	public void initializeRoutes() {
 		int vehiclesNr = instance.getVehiclesNr();
 		routes = new ArrayList<Route>(vehiclesNr);
@@ -43,56 +52,38 @@ public class MySolution extends SolutionAdapter {
 		}
 	}
 
-	// This is needed for tabu search
-	public Object clone() { //WHAT?
-		MySolution copy = (MySolution) super.clone();
-		copy.cost = new Cost(this.cost);
-		copy.routes = new ArrayList<Route>(this.routes);
-		return copy;
-	}
-	
-	public void updateParameters(double a, double b) {
-		// capacity violation test
-		if (a == 0) {
-			alpha = alpha / (1 + delta);
-		} else {
-			alpha = alpha * (1 + delta);
-			if(alpha > upLimit){
-				alpha = resetValue;
-			}
-		}
-		// time window violation test
-		if (b == 0) {
-			gamma = gamma / (1 + delta);
-		} else {
-			gamma = gamma * (1 + delta);
-			if(gamma > upLimit){
-				gamma = resetValue;
-			}
-		}
-	}
-
 	public void buildInitialRoutes() {
-		ArrayList<Customer> unroutedCustomers = new ArrayList<Customer>(instance.getSortedCustomers());
+		ArrayList<Customer> unroutedCustomers = new ArrayList<Customer>(
+				instance.getSortedCustomers());
 
 		int routeIndex = 0;
 
+		ArrayList<Customer> removeList = new ArrayList<>();
+		
 		while (unroutedCustomers.size() > 0) {
 			Route newRoute = routes.get(routeIndex);
-
+			removeList.clear();
 			for (Customer cust : unroutedCustomers) {
 				int pos = 0;
-				while (pos <= newRoute.getCustomersLength() && !isFeasibleInsert(cust, pos, newRoute)) {
+				while (pos <= newRoute.getCustomersLength()
+						&& !isFeasibleInsert(cust, pos, newRoute)) {
 					++pos;
 				}
 				if (pos <= newRoute.getCustomersLength()) {
-					newRoute.addCustomer(instance.getCustomers().get(cust.getNumber()), pos);
-					evaluateRoute(newRoute);
+					newRoute.addCustomer(
+							instance.getCustomers().get(cust.getNumber()), pos);
+					evaluateInitRoute(newRoute);
+					removeList.add(cust);
 				}
 			}
-
+			
+			for (Customer cust : removeList) {
+				unroutedCustomers.remove(cust);
+			}
+			
 			routes.set(routeIndex, newRoute);
 			++routeIndex;
+			evaluateObjectiveValue(newRoute.getCost(), new Cost());
 			System.out.println(newRoute.printRoute());
 			System.out.println(newRoute.printRouteCost());
 		}
@@ -100,13 +91,14 @@ public class MySolution extends SolutionAdapter {
 	}
 
 	private boolean isFeasibleInsert(Customer cust, int pos, Route route) { // WHAT?
-		if (route.getCost().getCapacity() + cust.getCapacity() > route.getAssignedVehicle().getCapacity()) {
+		if (route.getCost().getCapacity() + cust.getCapacity() > route
+				.getAssignedVehicle().getCapacity()) {
 			return false;
 		}
 		return true;
 	}
 
-	private void evaluateRoute(Route route) { // WHAT?
+	private void evaluateInitRoute(Route route) { // WHAT?
 		route.getCost().clear();
 
 		if (route.isEmpty()) {
@@ -118,14 +110,19 @@ public class MySolution extends SolutionAdapter {
 			int numCust = cust.getNumber();
 			int numPrevCust = prevCust.getNumber();
 
-			double distance = prevCust.getCost().getDistance() + instance.getDistance(numPrevCust, numCust);
-			double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
+			double distance = prevCust.getCost().getDistance()
+					+ instance.getDistance(numPrevCust, numCust);
+			double capacity = prevCust.getCost().getCapacity()
+					+ cust.getCapacity();
 
-			double shape = instance.getShape() * instance.getTime(numPrevCust, numCust);
+			double shape = instance.getShape()
+					* instance.getTime(numPrevCust, numCust);
 			double scale = instance.getScale();
 
-			double expectedTime = prevCust.getCost().getExpectedTime() + shape * scale;
-			double varianceTime = prevCust.getCost().getVarianceTime() + shape * scale * scale;
+			double expectedTime = prevCust.getCost().getExpectedTime() + shape
+					* scale;
+			double varianceTime = prevCust.getCost().getVarianceTime() + shape
+					* scale * scale;
 
 			int totalServiceTime = prevCust.getCost().getTotalServiceTime();
 			int lowerBound = cust.getStartTw();
@@ -137,16 +134,25 @@ public class MySolution extends SolutionAdapter {
 			if (upperBound <= totalServiceTime) {
 				delay += expectedTime + totalServiceTime - upperBound;
 			} else {
-				delay += shape * scale * (1 - instance.getGamma(shape + 1, scale, shiftedUpperBound))
-						- shiftedUpperBound * (1 - instance.getGamma(shape, scale, shiftedUpperBound));
+				delay += shape
+						* scale
+						* (1 - instance.getGamma(shape + 1, scale,
+								shiftedUpperBound))
+						- shiftedUpperBound
+						* (1 - instance.getGamma(shape, scale,
+								shiftedUpperBound));
 			}
 
 			double earliness = prevCust.getCost().getEarliness();
 			if (lowerBound <= totalServiceTime) {
 				earliness += 0;
 			} else {
-				earliness += shiftedLowerBound * instance.getGamma(shape, scale, shiftedLowerBound)
-						- shape * scale * instance.getGamma(shape + 1, scale, shiftedLowerBound);
+				earliness += shiftedLowerBound
+						* instance.getGamma(shape, scale, shiftedLowerBound)
+						- shape
+						* scale
+						* instance
+								.getGamma(shape + 1, scale, shiftedLowerBound);
 			}
 
 			totalServiceTime += cust.getServiceDuration();
@@ -165,19 +171,23 @@ public class MySolution extends SolutionAdapter {
 		int numCust = cust.getNumber();
 		int numPrevCust = prevCust.getNumber();
 
-		double distance = prevCust.getCost().getDistance() + instance.getDistance(numPrevCust, numCust);
+		double distance = prevCust.getCost().getDistance()
+				+ instance.getDistance(numPrevCust, numCust);
 		double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
 
-		double shape = instance.getShape() * instance.getTime(numPrevCust, numCust);
+		double shape = instance.getShape()
+				* instance.getTime(numPrevCust, numCust);
 		double scale = instance.getScale();
 
-		double expectedTime = prevCust.getCost().getExpectedTime() + shape * scale;
-		double varianceTime = prevCust.getCost().getVarianceTime() + shape * scale * scale;
+		double expectedTime = prevCust.getCost().getExpectedTime() + shape
+				* scale;
+		double varianceTime = prevCust.getCost().getVarianceTime() + shape
+				* scale * scale;
 
 		int totalServiceTime = prevCust.getCost().getTotalServiceTime();
-//		int lowerBound = cust.getStartTw();
+		// int lowerBound = cust.getStartTw();
 		int upperBound = cust.getEndTw();
-//		int shiftedLowerBound = lowerBound - totalServiceTime;
+		// int shiftedLowerBound = lowerBound - totalServiceTime;
 		int shiftedUpperBound = upperBound - totalServiceTime;
 
 		double delay = prevCust.getCost().getDelay();
@@ -186,17 +196,22 @@ public class MySolution extends SolutionAdapter {
 		if (upperBound <= totalServiceTime) {
 			overtime = expectedTime + totalServiceTime - upperBound;
 		} else {
-			overtime = shape * scale * (1 - instance.getGamma(shape + 1, scale, shiftedUpperBound))
-					- shiftedUpperBound * (1 - instance.getGamma(shape, scale, shiftedUpperBound));
+			overtime = shape
+					* scale
+					* (1 - instance.getGamma(shape + 1, scale,
+							shiftedUpperBound)) - shiftedUpperBound
+					* (1 - instance.getGamma(shape, scale, shiftedUpperBound));
 		}
 
 		double earliness = prevCust.getCost().getEarliness();
-//		if (lowerBound <= totalServiceTime) {
-//			earliness += 0;
-//		} else {
-//			earliness += shiftedLowerBound * instance.getGamma(shape, scale, shiftedLowerBound)
-//					- shape * scale * instance.getGamma(shape + 1, scale, shiftedLowerBound);
-//		}
+		// if (lowerBound <= totalServiceTime) {
+		// earliness += 0;
+		// } else {
+		// earliness += shiftedLowerBound * instance.getGamma(shape, scale,
+		// shiftedLowerBound)
+		// - shape * scale * instance.getGamma(shape + 1, scale,
+		// shiftedLowerBound);
+		// }
 
 		totalServiceTime += cust.getServiceDuration();
 
@@ -240,7 +255,7 @@ public class MySolution extends SolutionAdapter {
 		return routes.get(index);
 	}
 
-	public int getRouteNr() {
+	public int getRoutesNr() {
 		return routes.size();
 	}
 
@@ -250,5 +265,206 @@ public class MySolution extends SolutionAdapter {
 
 	public void deleteFromSolution(Route route) {
 		this.routes.remove(route);
+	}
+
+	public void evaluateAbsolutely() {
+		for (Route route : this.routes) {
+			evaluateRoute(route);
+		}
+	}
+
+	private void evaluateRoute(Route route) {
+		evaluateRoute(route, 0);
+	}
+
+	public void evaluateInsertRoute(Route route, Customer customer,
+			int position) {
+		route.addCustomer(customer, position);
+		evaluateRoute(route, position);
+	} // end method evaluate insert route
+
+	public void evaluateDeleteRoute(Route route, Customer customer,
+			int position) {
+		route.removeCustomer(position);
+		evaluateRoute(route, position);
+	} // end method evaluate delete route
+
+	private void evaluateRoute(Route route, int pos) { // WHAT?
+		Cost prevCost = new Cost(route.getCost());
+		route.getCost().clear();
+
+		if (route.isEmpty()) {
+			return;
+		}
+
+		Customer prevCust;
+		if (pos == 0) {
+			prevCust = instance.getDepot();
+		} else {
+			prevCust = route.getCustomer(pos - 1);
+		}
+
+		for (int i = pos; i < route.getCustomersLength(); ++i) {
+			Customer cust = route.getCustomer(i);
+			int numCust = cust.getNumber();
+			int numPrevCust = prevCust.getNumber();
+
+			double distance = prevCust.getCost().getDistance()
+					+ instance.getDistance(numPrevCust, numCust);
+			double capacity = prevCust.getCost().getCapacity()
+					+ cust.getCapacity();
+
+			double shape = instance.getShape()
+					* instance.getTime(numPrevCust, numCust);
+			double scale = instance.getScale();
+
+			double expectedTime = prevCust.getCost().getExpectedTime() + shape
+					* scale;
+			double varianceTime = prevCust.getCost().getVarianceTime() + shape
+					* scale * scale;
+
+			int totalServiceTime = prevCust.getCost().getTotalServiceTime();
+			int lowerBound = cust.getStartTw();
+			int upperBound = cust.getEndTw();
+			int shiftedLowerBound = lowerBound - totalServiceTime;
+			int shiftedUpperBound = upperBound - totalServiceTime;
+
+			double delay = prevCust.getCost().getDelay();
+			if (upperBound <= totalServiceTime) {
+				delay += expectedTime + totalServiceTime - upperBound;
+			} else {
+				delay += shape
+						* scale
+						* (1 - instance.getGamma(shape + 1, scale,
+								shiftedUpperBound))
+						- shiftedUpperBound
+						* (1 - instance.getGamma(shape, scale,
+								shiftedUpperBound));
+			}
+
+			double earliness = prevCust.getCost().getEarliness();
+			if (lowerBound <= totalServiceTime) {
+				earliness += 0;
+			} else {
+				earliness += shiftedLowerBound
+						* instance.getGamma(shape, scale, shiftedLowerBound)
+						- shape
+						* scale
+						* instance
+								.getGamma(shape + 1, scale, shiftedLowerBound);
+			}
+
+			totalServiceTime += cust.getServiceDuration();
+
+			cust.getCost().setDistance(distance);
+			cust.getCost().setCapacity(capacity);
+			cust.getCost().setExpectedTime(expectedTime);
+			cust.getCost().setVarianceTime(varianceTime);
+			cust.getCost().setTotalServiceTime(totalServiceTime);
+			cust.getCost().setDelay(delay);
+			cust.getCost().setEarliness(earliness);
+			prevCust = cust;
+		}
+
+		Customer cust = instance.getDepot();
+		int numCust = cust.getNumber();
+		int numPrevCust = prevCust.getNumber();
+
+		double distance = prevCust.getCost().getDistance()
+				+ instance.getDistance(numPrevCust, numCust);
+		double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
+
+		double shape = instance.getShape()
+				* instance.getTime(numPrevCust, numCust);
+		double scale = instance.getScale();
+
+		double expectedTime = prevCust.getCost().getExpectedTime() + shape
+				* scale;
+		double varianceTime = prevCust.getCost().getVarianceTime() + shape
+				* scale * scale;
+
+		int totalServiceTime = prevCust.getCost().getTotalServiceTime();
+		// int lowerBound = cust.getStartTw();
+		int upperBound = cust.getEndTw();
+		// int shiftedLowerBound = lowerBound - totalServiceTime;
+		int shiftedUpperBound = upperBound - totalServiceTime;
+
+		double delay = prevCust.getCost().getDelay();
+
+		double overtime;
+		if (upperBound <= totalServiceTime) {
+			overtime = expectedTime + totalServiceTime - upperBound;
+		} else {
+			overtime = shape
+					* scale
+					* (1 - instance.getGamma(shape + 1, scale,
+							shiftedUpperBound)) - shiftedUpperBound
+					* (1 - instance.getGamma(shape, scale, shiftedUpperBound));
+		}
+
+		double earliness = prevCust.getCost().getEarliness();
+		// if (lowerBound <= totalServiceTime) {
+		// earliness += 0;
+		// } else {
+		// earliness += shiftedLowerBound * instance.getGamma(shape, scale,
+		// shiftedLowerBound)
+		// - shape * scale * instance.getGamma(shape + 1, scale,
+		// shiftedLowerBound);
+		// }
+
+		totalServiceTime += cust.getServiceDuration();
+
+		route.getCost().setDistance(distance);
+		route.getCost().setCapacity(capacity);
+		route.getCost().setExpectedTime(expectedTime);
+		route.getCost().setVarianceTime(varianceTime);
+		route.getCost().setTotalServiceTime(totalServiceTime);
+		route.getCost().setDelay(delay);
+		route.getCost().setEarliness(earliness);
+		route.getCost().setVechile(1);
+		route.getCost().setOvertime(overtime);
+		route.getCost().calculateTotalCost();
+		evaluateObjectiveValue(route.getCost(), prevCost);
+	}
+
+	private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
+		double distance = this.cost.getDistance() + cost.getDistance()
+				- prevCost.getDistance();
+		double capacity = this.cost.getCapacity() + cost.getCapacity()
+				- prevCost.getCapacity();
+		double expectedTime = this.cost.getExpectedTime()
+				+ cost.getExpectedTime() - prevCost.getExpectedTime();
+		double varianceTime = this.cost.getVarianceTime()
+				+ cost.getVarianceTime() - prevCost.getVarianceTime();
+		int totalServiceTime = this.cost.getTotalServiceTime()
+				+ cost.getTotalServiceTime() - prevCost.getTotalServiceTime();
+		double delay = this.cost.getDelay() + cost.getDelay()
+				- prevCost.getDelay();
+		double earliness = this.cost.getEarliness() + cost.getEarliness()
+				- prevCost.getEarliness();
+		double vechile = this.cost.getVechile() + cost.getVechile()
+				- prevCost.getVechile();
+		double overtime = this.cost.getOvertime() + cost.getOvertime()
+				- prevCost.getOvertime();
+		this.cost.setDistance(distance);
+		this.cost.setCapacity(capacity);
+		this.cost.setExpectedTime(expectedTime);
+		this.cost.setVarianceTime(varianceTime);
+		this.cost.setTotalServiceTime(totalServiceTime);
+		this.cost.setDelay(delay);
+		this.cost.setEarliness(earliness);
+		this.cost.setVechile(vechile);
+		this.cost.setOvertime(overtime);
+		this.cost.calculateTotalCost();
+		setObjectiveValue(this.cost.getObjectiveValue(this.coefNu));
+	}
+	
+	public void updateParameters () {
+		if (this.cost.getCapacity() == 0) {
+			this.coefNu = this.coefNu / (1 + this.instance.getCoefPhi());
+		}
+		else {
+			this.coefNu = this.coefNu * (1 + this.instance.getCoefPhi());
+		}
 	}
 }

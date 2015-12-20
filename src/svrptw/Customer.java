@@ -27,6 +27,20 @@ public class Customer {
 		cost = new Cost();
 	}
 	
+	public Customer ( Customer copy ) {
+		this.cost =				new Cost(copy.cost);
+		this.number = 			new Integer(copy.number);
+		this.serviceDuration = 	new Double(copy.serviceDuration);
+		this.capacity = 		new Double(copy.capacity);
+		this.startTw =			new Integer(copy.startTw);
+		this.endTw = 			new Integer(copy.endTw);
+		this.assignedDepot =	new Depot(copy.assignedDepot);
+		this.distanceFromDepot= new Double(copy.distanceFromDepot);
+		this.isTaken = 			new Boolean(copy.isTaken);
+		this.routeIndex =		new Integer(copy.routeIndex);
+		this.ENC = 				new Integer(copy.ENC);
+	}
+	
 	public int getNumber() {
 		return this.number;
 	}

@@ -11,8 +11,11 @@ public class Parameters {
 	private double coefService;
 	private double coefTransportation;
 	private double coefRho;
+	private double coefPhi;
 	private double shape;
 	private double scale;
+	private int tenure;
+	private int iterations;
 	
 	public Parameters() {
 		this.precision = 1E-2;
@@ -25,8 +28,11 @@ public class Parameters {
 		this.coefService = 1;
 		this.coefTransportation = 1;
 		this.coefRho = 1;
+		this.coefPhi = 1;
 		this.shape = 1;
 		this.scale = 1;
+		this.tenure = 1;
+		this.iterations = 1000;
 	}
 
 	public double getCoefDelay() {
@@ -101,6 +107,14 @@ public class Parameters {
 		this.coefRho = coefRho;
 	}
 	
+	public double getCoefPhi() {
+		return this.coefPhi;
+	}
+	
+	public void setCoefPhi(double coefPhi) {
+		this.coefPhi = coefPhi;
+	}
+	
 	public double getShape() {
 		return this.shape;
 	}
@@ -123,5 +137,21 @@ public class Parameters {
 	
 	public void setPrecision(double precision) {
 		this.precision = precision;
+	}
+	
+	public int getTenure() {
+		return this.tenure;
+	}
+	
+	public void setTenure(int tenure) {
+		this.tenure = tenure;
+	}
+	
+	public int getIterations() {
+		return this.iterations;
+	}
+	
+	public void setIterations(int iterations) {
+		this.iterations = iterations;
 	}
 }

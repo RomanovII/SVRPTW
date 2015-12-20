@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import org.coinor.opents.SimpleTabuList;
 import org.coinor.opents.TabuList;
 
 import tabu.MovesType;
@@ -37,19 +38,20 @@ public class SVRPTW {
 
 		// Init memory for Tabu Search
 		initialSol = new MySolution();
-//		objFunc = new MyObjectiveFunction(instance, true);
-//		moveManager = new MyMoveManager(instance);
-//		moveManager.setMovesType(parameters.getMovesType());
+		initialSol.initializeRoutes();
+		initialSol.buildInitialRoutes();
+		objFunc = new MyObjectiveFunction();
+		moveManager = new MyMoveManager();
 //		// Tabu list
 //		// First is depotNr
-//		int dimension[] = { 1, instance.getVehiclesNr(), instance.getCustomersNr(), 1, 1 };
-//		tabuList = new MyTabuList(parameters.getTabuTenure(), dimension, instance);
+		int dimension[] = { 1, instance.getVehiclesNr(), instance.getCustomersNr(), 1, 1 };
+		tabuList = new SimpleTabuList(instance.getParameters().getTenure());
 //		// Create Tabu Search object
-//		search = new MySearchProgram(instance, initialSol, moveManager, objFunc, tabuList, false, outPrintSream, true);
+		search = new MySearchProgram(initialSol, moveManager, objFunc, tabuList, false, outPrintSream);
 //		// Start solving
-//		search.tabuSearch.setIterationsToGo(parameters.getIterations());
-//		search.tabuSearch.startSolving();
-//		duration.stop();
+		search.tabuSearch.setIterationsToGo(instance.getParameters().getIterations());
+		search.tabuSearch.startSolving();
+		duration.stop();
 //		initialSol.getCost().setC();
 //		objFunc = new MyObjectiveFunction(instance, false);
 //		search = new MySearchProgram(instance, search.getSolution(), moveManager, objFunc, tabuList, false,

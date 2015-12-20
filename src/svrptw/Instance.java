@@ -211,6 +211,14 @@ public class Instance {
 	public void setCoefRho(double coefRho) {
 		parameters.setCoefRho(coefRho);
 	}
+
+	public double getCoefPhi() {
+		return parameters.getCoefPhi();
+	}
+	
+	public void setCoefPhi(double coefPhi) {
+		parameters.setCoefPhi(coefPhi);
+	}
 	
 	public double getShape() {
 		return parameters.getShape();
@@ -221,6 +229,10 @@ public class Instance {
 	}
 	
 	public double getGamma(double shape, double scale, double value) {
+		if (shape == 0 || scale == 0) {
+			System.out.println("WTF???");
+			return 0;
+		}
 		GammaDistribution gd = new GammaDistribution(shape, scale);
 		return gd.cumulativeProbability(value);
 	}
@@ -228,7 +240,8 @@ public class Instance {
 	public ArrayList<Customer> calculateTimeToCustomer(Customer c) {
 		@SuppressWarnings("unchecked")
 		ArrayList<Customer> list = (ArrayList<Customer>) allCustomers.clone();
-		
+		list.remove(0);
+		list.remove(c);
 		Collections.sort(list, new CompareTime(c.getNumber()));
 		return list;
 	}

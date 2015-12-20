@@ -29,13 +29,13 @@ public class MySearchProgram implements TabuSearchListener{
 
 	public MySearchProgram(Solution initialSol, MoveManager moveManager, ObjectiveFunction objFunc, TabuList tabuList, boolean minmax, PrintStream outPrintStream)
 	{
-		tabuSearch = new SingleThreadedTabuSearch(initialSol, moveManager, objFunc,tabuList,	new BestEverAspirationCriteria(), minmax );
+		tabuSearch = new SingleThreadedTabuSearch(initialSol, moveManager, objFunc, tabuList,	new BestEverAspirationCriteria(), minmax );
 		feasibleIndex = -1;
 		bestIndex = 0;
 		numberFeasibleSol = 0;
 		MySearchProgram.setIterationsDone(0);
 		tabuSearch.addTabuSearchListener( this );
-		tabuSearch.addTabuSearchListener((MyTabuList)tabuList);
+		//tabuSearch.addTabuSearchListener((MyTabuList)tabuList);
 		this.manager = (MyMoveManager) moveManager;
 	}
 
@@ -50,6 +50,7 @@ public class MySearchProgram implements TabuSearchListener{
 		bestCost 	= getCostFromObjective(sol.getObjectiveValue());
 		bestRoutes 	= cloneRoutes(sol.getRoutes());
 		bestIndex 	= tabuSearch.getIterationsCompleted() + 1; // plus the current one
+		System.out.println(bestIndex + ": " + (sol.getObjectiveValue())[0]);
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class MySearchProgram implements TabuSearchListener{
 			tabuSearch.setBestSolution(sol);
 			numberFeasibleSol++;
 		}
-		sol.updateParameters(sol.getObjectiveValue()[3], sol.getObjectiveValue()[4]);
+		sol.updateParameters();
 	}
 
 	@Override
@@ -115,13 +116,7 @@ public class MySearchProgram implements TabuSearchListener{
 	// return a new created cost from the objective vector passed as parameter
 	private Cost getCostFromObjective(double[] objective) {
 		Cost cost = new Cost();
-		cost.total        = objective[1];
-		cost.travelTime   = objective[2];
-		cost.loadViol     = objective[3];
-		cost.twViol       = objective[4];
-		cost.totalDelay   = objective[5];
-		cost.totalEarly   = objective[6];
-		cost.totalWeightedCost = objective[7];
+		cost.setTotalCost( objective[0] );
 		return cost;
 	}
 

@@ -123,7 +123,7 @@ public class Cost {
 	public double getTotalCost() {
 		return this.totalCost;
 	}
-	
+
 	public void setTotalCost(double totalCost) {
 		this.totalCost = totalCost;
 	}
@@ -138,7 +138,8 @@ public class Cost {
 		double coefDistance = instance.getCoefDistance();
 		double coefOvertime = instance.getCoefOvertime();
 		double coefVechile = instance.getCoefVechile();
-		this.tranCost = coefDistance * this.distance + coefOvertime * this.overtime + coefVechile * this.vechile;
+		this.tranCost = coefDistance * this.distance + coefOvertime
+				* this.overtime + coefVechile * this.vechile;
 	}
 
 	public void calculateTotalCost() {
@@ -149,7 +150,8 @@ public class Cost {
 		calculateServiceCost();
 		calculateTransportationCost();
 		if (flagTotal) {
-			this.totalCost = coefRho * coefServ * this.servCost + (1 - coefRho) * coefTran * this.tranCost;
+			this.totalCost = coefRho * coefServ * this.servCost + (1 - coefRho)
+					* coefTran * this.tranCost;
 		} else {
 			this.totalCost = this.tranCost;
 		}
@@ -178,8 +180,12 @@ public class Cost {
 	public void setTotalServiceTime(int serviceTime) {
 		this.serviceTime = serviceTime;
 	}
-	
+
 	public boolean checkFeasible() {
 		return true;
+	}
+
+	public double[] getObjectiveValue(double coefNu) {
+		return new double[] { totalCost + coefNu * capacity };
 	}
 }

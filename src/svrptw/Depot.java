@@ -10,6 +10,11 @@ public class Depot extends Customer {
 		super();
 		this.assignedCustomers = new ArrayList<>();
 	}
+	
+	public Depot( Depot copy ) {
+		super( copy );
+		this.assignedCustomers = new ArrayList<Customer>( copy.assignedCustomers );
+	}
 
 	public int getAssignedCustomersNr() {
 		return assignedCustomers.size();
