@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.coinor.opents.SimpleTabuList;
 import org.coinor.opents.TabuList;
 
-import tabu.MovesType;
 import tabu.MyMoveManager;
 import tabu.MyObjectiveFunction;
 import tabu.MySearchProgram;

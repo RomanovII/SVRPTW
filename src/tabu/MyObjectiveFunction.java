@@ -10,14 +10,18 @@ public class MyObjectiveFunction implements ObjectiveFunction {
 
 	public double[] evaluate(Solution solution, Move proposedMove) {
 		MySolution sol = (MySolution) solution;
-		sol = (MySolution) sol.clone();
+		MyRelocateMove move = (MyRelocateMove) proposedMove;
+		double[] objectiveValue;
 		if ( proposedMove == null ) {
 			sol.evaluateAbsolutely();
+			objectiveValue = sol.getObjectiveValue();
 		}
 		else {
-			proposedMove.operateOn( sol );
+			move.operateOn( sol );
+			objectiveValue = sol.getObjectiveValue();
+			move.undoOperation( sol );
 		}
-		return sol.getObjectiveValue();
+		return new double[] { objectiveValue[0] };
 	}
 	
 } // end class MyObjectiveFunction

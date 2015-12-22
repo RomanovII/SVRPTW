@@ -1,7 +1,6 @@
 package tabu;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.coinor.opents.Move;
 import org.coinor.opents.MoveManager;
@@ -26,43 +25,26 @@ public class MyMoveManager implements MoveManager {
 
 	private Move[] getRelocateMoves(MySolution sol) {
 		ArrayList<Route> routes = sol.getRoutes();
-		Move[] buffer = new Move[instance.getCustomersNr()
-				* instance.getVehiclesNr()];
+		Move[] buffer = new Move[instance.getCustomersNr() * instance.getVehiclesNr()];
 		int nextBufferPos = 0;
 		int deletePositionIndex;
 		int insertPositionIndex;
-		int customerRouteindex;
-		int thisRouteIndex;
 
-		for (int i = 0; i < routes.size(); i++) {
-			if (!routes.get(i).isEmpty()) {
-				Customer customer;
-				thisRouteIndex = routes.get(i).getIndex(); // route you are
-															// evaluating
-				ArrayList<Customer> customers = findCustomersForSwap(routes
-						.get(i)); // the list of all the customers near to the
-									// route (can include the customer of the
-									// route itself)
-				for (int z = 0; z < customers.size(); z++) {
-					customer = customers.get(z); // iterate each customer of the
-													// list
-					customerRouteindex = customer.getRouteIndex(); // index of
-																	// the route
-																	// to which
-																	// the
-																	// customer
-																	// found
-																	// belongs
-					//if (customerRouteindex != thisRouteIndex) {
-						insertPositionIndex = insertBestTravel(routes.get(i),
-								customer);
-						deletePositionIndex = sol.getRoute(customerRouteindex)
-								.getCustomers().indexOf(customer);
-						buffer[nextBufferPos++] = new MyRelocateMove(customer,
-								customerRouteindex, deletePositionIndex,
-								thisRouteIndex, insertPositionIndex);
-					//}
+		for (Route routeFrom : routes) {
+			int size = routeFrom.getCustomersLength();
+			for (int i = 0; i < size; ++i) {
+				Customer customer = routeFrom.getCustomer(i);
+				deletePositionIndex = i;
+				routeFrom.removeCustomer(deletePositionIndex);
+				for (Route routeTo : routes) {
+					insertPositionIndex = insertBestTravel(routeTo, customer);
+					if (routeFrom.getIndex() == routeTo.getIndex() && deletePositionIndex == insertPositionIndex) {
+						continue;
+					}
+					buffer[nextBufferPos++] = new MyRelocateMove(customer, routeFrom.getIndex(), deletePositionIndex,
+							routeTo.getIndex(), insertPositionIndex);
 				}
+				routeFrom.addCustomer(customer, deletePositionIndex);
 			}
 		}
 		Move[] moves = new Move[nextBufferPos];
@@ -70,31 +52,14 @@ public class MyMoveManager implements MoveManager {
 		return moves;
 	}
 
-	public ArrayList<Customer> findCustomersForSwap(Route path) {
-		Route route = path;
-		ArrayList<Customer> list = new ArrayList<Customer>();
-		ArrayList<Customer> cust = (ArrayList<Customer>) route.getCustomers();
-
-		for (int i = 0; i < route.getCustomersLength(); i++) {
-			Customer k = cust.get(i);
-			ArrayList<Customer> orderedList = instance
-					.calculateTimeToCustomer(k);
-			list.addAll(orderedList.subList(0, instance.getCustomersNr() / 2));
-		}
-
-		HashSet<Customer> hs = new HashSet<Customer>();
-		hs.addAll(list);
-		list.clear();
-		list.addAll(hs);
-
-		return list;
-
-	}
-
 	private int insertBestTravel(Route route, Customer customerChosenPtr) { // WHAT?
 		double minCost = Double.MAX_VALUE;
 		double tempMinCost = Double.MAX_VALUE;
 		int position = 0;
+
+		if (route.isEmpty()) {
+			return position;
+		}
 
 		// first position
 		/*
@@ -105,53 +70,35 @@ public class MyMoveManager implements MoveManager {
 		 * customer in first position - time to go from depot to customer in
 		 * first position
 		 */
-		if (customerChosenPtr.getEndTw() <= route.getCustomer(0).getEndTw()) {
-			tempMinCost = instance.getDistance(route.getDepotNr(),
-					customerChosenPtr.getNumber())
-					+ instance.getDistance(customerChosenPtr.getNumber(),
-							route.getFirstCustomerNr())
-					- instance.getDistance(route.getDepotNr(),
-							route.getFirstCustomerNr());
-			if (minCost > tempMinCost) {
-				minCost = tempMinCost;
-				position = 0;
-			}
+		tempMinCost = instance.getDistance(route.getDepotNr(), customerChosenPtr.getNumber())
+				+ instance.getDistance(customerChosenPtr.getNumber(), route.getFirstCustomerNr())
+				- instance.getDistance(route.getDepotNr(), route.getFirstCustomerNr());
+		if (minCost > tempMinCost) {
+			minCost = tempMinCost;
+			position = 0;
 		}
 
 		// at the end
 		// If the tw from last customer of the routes inserted is lower than the
 		// current tw
 		// then do the same as above
-		if (route.getCustomer(route.getCustomersLength() - 1).getEndTw() <= customerChosenPtr
-				.getEndTw()) {
-			tempMinCost = instance.getDistance(route.getLastCustomerNr(),
-					customerChosenPtr.getNumber())
-					+ instance.getDistance(customerChosenPtr.getNumber(),
-							route.getDepotNr())
-					- instance.getDistance(route.getLastCustomerNr(),
-							route.getDepotNr());
-			if (minCost > tempMinCost) {
-				minCost = tempMinCost;
-				position = route.getCustomersLength();
-			}
+		tempMinCost = instance.getDistance(route.getLastCustomerNr(), customerChosenPtr.getNumber())
+				+ instance.getDistance(customerChosenPtr.getNumber(), route.getDepotNr())
+				- instance.getDistance(route.getLastCustomerNr(), route.getDepotNr());
+		if (minCost > tempMinCost) {
+			minCost = tempMinCost;
+			position = route.getCustomersLength();
 		}
 		// try between each customer
 		// check time windows by pair (preceding and next), comparing them with
 		// ours
 		for (int i = 0; i < route.getCustomersLength() - 1; ++i) {
-			if (route.getCustomer(i).getEndTw() <= customerChosenPtr.getEndTw()
-					&& customerChosenPtr.getEndTw() <= route.getCustomer(i + 1)
-							.getEndTw()) {
-				tempMinCost = instance.getDistance(route.getCustomerNr(i),
-						customerChosenPtr.getNumber())
-						+ instance.getDistance(customerChosenPtr.getNumber(),
-								route.getCustomerNr(i + 1))
-						- instance.getDistance(route.getCustomerNr(i),
-								route.getCustomerNr(i + 1));
-				if (minCost > tempMinCost) {
-					minCost = tempMinCost;
-					position = i + 1;
-				}
+			tempMinCost = instance.getDistance(route.getCustomerNr(i), customerChosenPtr.getNumber())
+					+ instance.getDistance(customerChosenPtr.getNumber(), route.getCustomerNr(i + 1))
+					- instance.getDistance(route.getCustomerNr(i), route.getCustomerNr(i + 1));
+			if (minCost > tempMinCost) {
+				minCost = tempMinCost;
+				position = i + 1;
 			}
 		}
 		return position;

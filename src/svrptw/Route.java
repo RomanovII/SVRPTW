@@ -24,10 +24,8 @@ public class Route {
 		this.cost = new Cost(route.cost);
 		this.assignedVehicle = route.assignedVehicle;
 		this.depot = route.depot;
-		this.customers = new ArrayList<>();
-		for (int i = 0; i < route.customers.size(); ++i) {
-			this.customers.add(/* new Customer */(route.getCustomer(i)));
-		}
+		this.customers = new ArrayList<Customer>(route.getCustomersLength());
+		for (Customer cust : route.getCustomers()) this.customers.add(cust);
 	}
 
 	public Customer getCustomer(int index) {

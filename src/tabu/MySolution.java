@@ -31,7 +31,8 @@ public class MySolution extends SolutionAdapter {
 	public Object clone() { // WHAT?
 		MySolution copy = (MySolution) super.clone();
 		copy.cost = new Cost(this.cost);
-		copy.routes = new ArrayList<Route>(this.routes);
+		copy.routes = new ArrayList<Route>(this.routes.size());
+		for (Route route : this.routes) copy.routes.add(new Route(route));
 		copy.coefNu = new Double(this.coefNu);
 		return copy;
 	}
@@ -87,7 +88,7 @@ public class MySolution extends SolutionAdapter {
 			System.out.println(newRoute.printRoute());
 			System.out.println(newRoute.printRouteCost());
 		}
-		trimRoutes(this.routes);
+		//trimRoutes(this.routes);
 	}
 
 	private boolean isFeasibleInsert(Customer cust, int pos, Route route) { // WHAT?
@@ -294,6 +295,7 @@ public class MySolution extends SolutionAdapter {
 		route.getCost().clear();
 
 		if (route.isEmpty()) {
+			evaluateObjectiveValue(route.getCost(), prevCost);
 			return;
 		}
 

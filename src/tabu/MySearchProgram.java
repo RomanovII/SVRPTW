@@ -62,17 +62,17 @@ public class MySearchProgram implements TabuSearchListener{
 	@Override
 	public void newCurrentSolutionFound(TabuSearchEvent event) {
 		sol = ((MySolution)tabuSearch.getCurrentSolution());
-		currentCost = getCostFromObjective(sol.getObjectiveValue());
-
-		MySearchProgram.iterationsDone += 1;
-		if(currentCost.checkFeasible() && (currentCost.getTotalCost() < feasibleCost.getTotalCost() - instance.getPrecision()))
-		{
-			feasibleCost = currentCost;
-			feasibleRoutes = cloneRoutes(sol.getRoutes());
-			// set the new best to the current one
-			tabuSearch.setBestSolution(sol);
-			numberFeasibleSol++;
-		}
+//		currentCost = getCostFromObjective(sol.getObjectiveValue());
+//
+//		MySearchProgram.iterationsDone += 1;
+//		if(currentCost.checkFeasible() && (currentCost.getTotalCost() < feasibleCost.getTotalCost() - instance.getPrecision()))
+//		{
+//			feasibleCost = currentCost;
+//			feasibleRoutes = cloneRoutes(sol.getRoutes());
+//			// set the new best to the current one
+//			tabuSearch.setBestSolution(sol);
+//			numberFeasibleSol++;
+//		}
 		sol.updateParameters();
 	}
 
@@ -87,30 +87,31 @@ public class MySearchProgram implements TabuSearchListener{
 	 */
 	@Override
 	public void tabuSearchStarted(TabuSearchEvent event) {
-		sol = ((MySolution)tabuSearch.getCurrentSolution());
-		// initialize the feasible and best cost with the initial solution objective value
-		bestCost = getCostFromObjective(sol.getObjectiveValue());
-		feasibleCost = bestCost;
-		if (!feasibleCost.checkFeasible()) {
-			feasibleCost.setTotalCost(Double.POSITIVE_INFINITY);
-		}
-		feasibleRoutes = cloneRoutes(sol.getRoutes());
-		bestRoutes = feasibleRoutes;
+//		sol = ((MySolution)tabuSearch.getCurrentSolution());
+//		// initialize the feasible and best cost with the initial solution objective value
+//		bestCost = getCostFromObjective(sol.getObjectiveValue());
+//		feasibleCost = bestCost;
+//		if (!feasibleCost.checkFeasible()) {
+//			feasibleCost.setTotalCost(Double.POSITIVE_INFINITY);
+//		}
+//		feasibleRoutes = cloneRoutes(sol.getRoutes());
+//		bestRoutes = feasibleRoutes;
 	}
 
 	@Override
 	public void tabuSearchStopped(TabuSearchEvent event) {
-		sol    = ((MySolution)tabuSearch.getBestSolution());
-		if (feasibleCost.getTotalCost() != Double.POSITIVE_INFINITY) {
-			sol.setCost(feasibleCost);
-			sol.setRoutes(feasibleRoutes);
-			tabuSearch.setBestSolution(sol);
-		}
+		System.out.println("END. " + bestIndex + ": " + (sol.getObjectiveValue())[0]);
+//		sol    = ((MySolution)tabuSearch.getBestSolution());
+//		if (feasibleCost.getTotalCost() != Double.POSITIVE_INFINITY) {
+//			sol.setCost(feasibleCost);
+//			sol.setRoutes(feasibleRoutes);
+//			tabuSearch.setBestSolution(sol);
+//		}
 	}
 
 	@Override
 	public void unimprovingMoveMade(TabuSearchEvent event) {
-		counter++;
+//		counter++;
 	}
 
 	// return a new created cost from the objective vector passed as parameter

@@ -32,16 +32,16 @@ public class MyRelocateMove implements ComplexMove {
 		MySolution sol = (MySolution) solution;
 		Route insertRoute = sol.getRoute(insertRouteNr);
 		Route deleteRoute = sol.getRoute(deleteRouteNr);
-		sol.evaluateInsertRoute(insertRoute, customer, insertPositionIndex);
 		sol.evaluateDeleteRoute(deleteRoute, customer, deletePositionIndex);
+		sol.evaluateInsertRoute(insertRoute, customer, insertPositionIndex);
 	} // end operateOn
 
 	public void undoOperation(Solution solution) {
 		MySolution sol = (MySolution) solution;
 		Route insertRoute = sol.getRoute(deleteRouteNr);
 		Route deleteRoute = sol.getRoute(insertRouteNr);
-		sol.evaluateInsertRoute(insertRoute, customer, deletePositionIndex);
 		sol.evaluateDeleteRoute(deleteRoute, customer, insertPositionIndex);
+		sol.evaluateInsertRoute(insertRoute, customer, deletePositionIndex);
 	}
 
 	/**

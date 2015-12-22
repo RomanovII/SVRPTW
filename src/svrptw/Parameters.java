@@ -24,11 +24,11 @@ public class Parameters {
 		this.coefDistance = 1;
 		this.coefOvertime = 1;
 		this.coefVechile = 1;
-		this.flagTotal = false;
+		this.flagTotal = true;
 		this.coefService = 1;
 		this.coefTransportation = 1;
-		this.coefRho = 1;
-		this.coefPhi = 1;
+		this.coefRho = 0.7;
+		this.coefPhi = 0.5;
 		this.shape = 1;
 		this.scale = 1;
 		this.tenure = 1;
