@@ -69,16 +69,16 @@ public class Route {
 
 	public String printRoute() {
 		StringBuffer print = new StringBuffer();
-		print.append("Route[" + index + ", " + (getCustomersLength()) + "]=");
-		print.append(" " + this.depot.getNumber());
+		//print.append("Route[" + index + ", " + (getCustomersLength()) + "]=");
+		print.append(this.depot.getNumber() + " ");
 		for (int i = 0; i < this.customers.size(); ++i) {
-			print.append(" " + this.customers.get(i)
+			print.append(this.customers.get(i)
 					.getNumber()/*
 								 * + "(" + this.customers.get(i).getRouteIndex()
 								 * + ")"
-								 */);
+								 */ + " ");
 		}
-		// print.append("\n");
+		//print.append("\n");
 		return print.toString();
 	}
 

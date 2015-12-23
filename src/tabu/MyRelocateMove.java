@@ -6,7 +6,7 @@ import svrptw.Customer;
 import svrptw.Route;
 
 @SuppressWarnings("serial")
-public class MyRelocateMove implements ComplexMove {
+public class MyRelocateMove implements Move {
 	private Customer customer;
 	private int deleteRouteNr;
 	private int deletePositionIndex;
@@ -134,10 +134,15 @@ public class MyRelocateMove implements ComplexMove {
 	public int getInsertPositionIndex() {
 		return insertPositionIndex;
 	}
+	
+    public int hashCode()
+    {   
+        return customer.getNumber();
+    }
 
-	@Override
-	public int[] attributes() {
-		return new int[] { customer.getNumber(), insertRouteNr,
-				insertPositionIndex, deleteRouteNr, deletePositionIndex };
-	}
+//	@Override
+//	public int[] attributes() {
+//		return new int[] { customer.getNumber(), insertRouteNr,
+//				insertPositionIndex, deleteRouteNr, deletePositionIndex };
+//	}
 }

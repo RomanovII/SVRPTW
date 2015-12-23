@@ -20,19 +20,19 @@ public class Parameters {
 	public Parameters() {
 		this.precision = 1E-2;
 		this.coefDelay = 1;
-		this.coefEarliness = 1;
+		this.coefEarliness = 10;
 		this.coefDistance = 1;
-		this.coefOvertime = 1;
-		this.coefVechile = 1;
-		this.flagTotal = true;
+		this.coefOvertime = 0;
+		this.coefVechile = 0;
+		this.flagTotal = false;
 		this.coefService = 1;
 		this.coefTransportation = 1;
 		this.coefRho = 0.7;
 		this.coefPhi = 0.5;
 		this.shape = 1;
 		this.scale = 1;
-		this.tenure = 1;
-		this.iterations = 1000;
+		this.tenure = 7;
+		this.iterations = 300;
 	}
 
 	public double getCoefDelay() {

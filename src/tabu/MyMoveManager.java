@@ -20,7 +20,70 @@ public class MyMoveManager implements MoveManager {
 	@Override
 	public Move[] getAllMoves(Solution solution) {
 		MySolution sol = ((MySolution) solution);
-		return getRelocateMoves(sol);
+		return getRelocateMoves( sol );//getRelocateMoves(sol);
+	}
+	
+	private Move[] getMoves(MySolution sol) {
+		Move[] buffer = new Move[5 * instance.getCustomersNr() * instance.getCustomersNr()];
+		int nextBufferPos = 0;
+		int inRoute = 0, inPos = 0;
+		boolean in = false;
+		for (int i = 0; i < sol.getRoutesNr(); ++i) {
+			if (sol.getRoute(i).isEmpty()) {
+				inRoute = i;
+				in = true;
+				break;
+			}
+		}
+		for (int i = 1; i < instance.getCustomersNr(); ++i) {
+			double[] distances = {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
+			int[] indexs = {instance.getCustomersNr(),instance.getCustomersNr(),instance.getCustomersNr(),instance.getCustomersNr(),instance.getCustomersNr()};
+			for (int j = 1; j < instance.getCustomersNr(); ++j) {
+				if (i == j)
+					continue;
+				double dist = instance.getDistance(i, j);
+				int index = j;
+				for (int k = 0; k < 5; ++k) {
+					if (distances[k] > dist) {
+						double tmp = dist;
+						dist = distances[k];
+						distances[k] = tmp;
+						int t = index;
+						index = indexs[k];
+						indexs[k] = t;
+					}
+				}
+			}
+			Customer customer = instance.getCustomers().get(i);
+			int deleteRouteNr = customer.getRouteIndex();
+			int deletePositionIndex = 0;
+			for (int j = 0; j < sol.getRoute(deleteRouteNr).getCustomersLength(); ++j) {
+				if (customer.getNumber() == sol.getRoute(deleteRouteNr).getCustomerNr(j)) {
+					deletePositionIndex = j;
+				}
+			}
+			for (int k = 0; k < 5; ++k) {
+				if (indexs[k] == instance.getCustomersNr())
+					break;
+				Customer cust = instance.getCustomers().get(indexs[k]);
+				int insertRouteNr = cust.getRouteIndex();
+				int insertPositionIndex = 0;
+				for (int j = 0; j < sol.getRoute(insertRouteNr).getCustomersLength(); ++j) {
+					if (cust.getNumber() == sol.getRoute(insertRouteNr).getCustomerNr(j)) {
+						insertPositionIndex = j;
+					}
+				}
+				buffer[nextBufferPos++] = new MyRelocateMove(customer, deleteRouteNr, deletePositionIndex, insertRouteNr, insertPositionIndex);
+				if (!sol.getRoute(insertRouteNr).isEmpty() && sol.getRoute(insertRouteNr).getCustomersLength() > insertPositionIndex + 1)
+					buffer[nextBufferPos++] = new MyRelocateMove(customer, deleteRouteNr, deletePositionIndex, insertRouteNr, insertPositionIndex + 1);
+			}
+			if (in) {
+				buffer[nextBufferPos++] = new MyRelocateMove(customer, deleteRouteNr, deletePositionIndex, inRoute, inPos);
+			}
+		}
+		Move[] moves = new Move[nextBufferPos];
+		System.arraycopy(buffer, 0, moves, 0, nextBufferPos);
+		return moves;
 	}
 
 	private Move[] getRelocateMoves(MySolution sol) {

@@ -230,7 +230,7 @@ public class Instance {
 	
 	public double getGamma(double shape, double scale, double value) {
 		if (shape == 0 || scale == 0) {
-			System.out.println("WTF???");
+//			System.out.println("WTF???");
 			return 0;
 		}
 		GammaDistribution gd = new GammaDistribution(shape, scale);

@@ -62,6 +62,9 @@ public class MySolution extends SolutionAdapter {
 		ArrayList<Customer> removeList = new ArrayList<>();
 		
 		while (unroutedCustomers.size() > 0) {
+			if (routeIndex == instance.getVehiclesNr()) {
+				System.out.println("limit");
+			}
 			Route newRoute = routes.get(routeIndex);
 			removeList.clear();
 			for (Customer cust : unroutedCustomers) {
@@ -469,4 +472,6 @@ public class MySolution extends SolutionAdapter {
 			this.coefNu = this.coefNu * (1 + this.instance.getCoefPhi());
 		}
 	}
+	
+	
 }
