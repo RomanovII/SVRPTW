@@ -40,7 +40,7 @@ public class SVRPTW {
 		// Init memory for Tabu Search
 		initialSol = new MySolution();
 		initialSol.initializeRoutes();
-		initialSol.buildInitialRoutes();
+		initialSol.buildInitRoutes();
 		objFunc = new MyObjectiveFunction();
 		moveManager = new MyMoveManager();
 //		// Tabu list

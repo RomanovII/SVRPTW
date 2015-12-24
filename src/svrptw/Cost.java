@@ -185,7 +185,7 @@ public class Cost {
 		return true;
 	}
 
-	public double[] getObjectiveValue(double coefNu) {
-		return new double[] { totalCost /*+ coefNu * capacity*/ };
+	public double getObjectiveValue(double coefNu) {
+		return totalCost /*+ coefNu * capacity*/ ;
 	}
 }

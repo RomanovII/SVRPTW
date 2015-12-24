@@ -17,6 +17,7 @@ public class MySolution extends SolutionAdapter {
 	private ArrayList<Route> routes;
 	private Cost cost;
 	private double coefNu;
+	private double capacityViol;
 
 	// public MySolution(){} //This is needed otherwise java gives random
 	// errors.. YES we love java <3
@@ -25,6 +26,7 @@ public class MySolution extends SolutionAdapter {
 		cost = new Cost();
 		routes = new ArrayList<Route>();
 		coefNu = 1;
+		capacityViol = 0;
 	}
 
 	// This is needed for tabu search
@@ -34,6 +36,7 @@ public class MySolution extends SolutionAdapter {
 		copy.routes = new ArrayList<Route>(this.routes.size());
 		for (Route route : this.routes) copy.routes.add(new Route(route));
 		copy.coefNu = new Double(this.coefNu);
+		copy.capacityViol = new Double(this.capacityViol);
 		return copy;
 	}
 	
@@ -53,6 +56,56 @@ public class MySolution extends SolutionAdapter {
 		}
 	}
 
+	public void buildInitRoutes() {
+		ArrayList<Customer> unroutedCustomers = new ArrayList<Customer>(
+				instance.getSortedCustomers());
+		int size = unroutedCustomers.size() / instance.getVehiclesNr() + 1;
+		for (int routeIndex = 0; routeIndex < instance.getVehiclesNr(); ++routeIndex) {
+			Route newRoute = routes.get(routeIndex);
+			for (int i = 0; i < size; ++i) {
+				if (unroutedCustomers.size() > 0) {
+					newRoute.addCustomer(unroutedCustomers.get(0));
+					unroutedCustomers.remove(0);
+				}
+			}
+		}
+		evaluateAbsolutely();
+		int routeIndex = 0;
+		ArrayList<Customer> removeList = new ArrayList<>();
+		
+		while (unroutedCustomers.size() > 0) {
+			if (routeIndex == instance.getVehiclesNr()) {
+				System.out.println("limit");
+			}
+			Route newRoute = routes.get(routeIndex);
+			removeList.clear();
+			for (Customer cust : unroutedCustomers) {
+				int pos = 0;
+				while (pos <= newRoute.getCustomersLength()
+						&& !isFeasibleInsert(cust, pos, newRoute)) {
+					++pos;
+				}
+				if (pos <= newRoute.getCustomersLength()) {
+					newRoute.addCustomer(
+							instance.getCustomers().get(cust.getNumber()), pos);
+					evaluateInitRoute(newRoute);
+					removeList.add(cust);
+				}
+			}
+			
+			for (Customer cust : removeList) {
+				unroutedCustomers.remove(cust);
+			}
+			
+			routes.set(routeIndex, newRoute);
+			++routeIndex;
+			evaluateObjectiveValue(newRoute.getCost(), new Cost());
+			System.out.println(newRoute.printRoute());
+			System.out.println(newRoute.printRouteCost());
+		}
+		//trimRoutes(this.routes);
+	}
+	
 	public void buildInitialRoutes() {
 		ArrayList<Customer> unroutedCustomers = new ArrayList<Customer>(
 				instance.getSortedCustomers());
@@ -432,6 +485,14 @@ public class MySolution extends SolutionAdapter {
 		evaluateObjectiveValue(route.getCost(), prevCost);
 	}
 
+	private void calcCapacityViol() {
+		capacityViol = 0;
+		for (Route route : routes) {
+			double capacViol = route.getCost().getCapacity() - route.getAssignedVehicle().getCapacity();
+			capacityViol += capacViol > 0 ? capacViol : 0;
+		}
+	}
+	
 	private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
 		double distance = this.cost.getDistance() + cost.getDistance()
 				- prevCost.getDistance();
@@ -461,7 +522,9 @@ public class MySolution extends SolutionAdapter {
 		this.cost.setVechile(vechile);
 		this.cost.setOvertime(overtime);
 		this.cost.calculateTotalCost();
-		setObjectiveValue(this.cost.getObjectiveValue(this.coefNu));
+		double obj2 = this.cost.getObjectiveValue(this.coefNu);
+		calcCapacityViol();
+		setObjectiveValue(new double[] {capacityViol, obj2});
 	}
 	
 	public void updateParameters () {
@@ -473,5 +536,14 @@ public class MySolution extends SolutionAdapter {
 		}
 	}
 	
-	
+	public boolean isFeasible() {
+		boolean feasible = true;
+		for (Route route : routes) {
+			if (route.getCost().getCapacity() > route.getAssignedVehicle().getCapacity()) {
+				feasible = false;
+				break;
+			}
+		}
+		return feasible;
+	}
 }
