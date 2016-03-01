@@ -1,58 +1,68 @@
 ﻿package svrptw;
 
+import java.io.Console;
 import java.io.FileWriter;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
 import org.coinor.opents.SimpleTabuList;
 import org.coinor.opents.TabuList;
 import org.coinor.opents.TabuSearch;
+import org.coinor.opents.TabuSearchListener;
 
 import tabu.MyMoveManager;
 import tabu.MyObjectiveFunction;
 import tabu.MySearchProgram;
 import tabu.MySolution;
 import tabu.MyTabuList;
-import svrptw.Test;
 import heneticmethod.*;
 
-public class SVRPTW {
+public class SVRPTW extends Thread{
+	MethodListener listener;
+	Instance instance = Instance.getInstance();
+	
+	public SVRPTW(Matrix matrix, MethodListener listener) {
+		this.listener = listener;
+		this.instance.populate(matrix);
+	}
+	
 	public SVRPTW(Matrix matrix) {
-		MySearchProgram search;
-		MySolution initialSol;
-		MyObjectiveFunction objFunc;
-		MyMoveManager moveManager;
-		TabuList tabuList;
-		Parameters parameters = new Parameters(); // holds all the parameters
-													// passed from the input
-													// line
-		Instance instance = Instance.getInstance();
-		
-		Duration duration = new Duration(); // used to calculate the elapsed
-											// time
-		PrintStream outPrintSream = null; // used to redirect the output
-
+		this.listener = null;
+		this.instance.populate(matrix);
+	}
+	
+	public void run() {
+		Duration duration = new Duration(); // used to calculate the elapsed time
 		duration.start();
-
-		// get the instance from the file
-		instance.populate(matrix);
-
-		// Init memory for Tabu Search
-		initialSol = new MySolution();
+		
+		MySolution initialSol = new MySolution();
 		initialSol.initializeRoutes();
 		initialSol.buildInitRoutes();
-		objFunc = new MyObjectiveFunction();
-		moveManager = new MyMoveManager();
-//		// Tabu list
-//		// First is depotNr
-		int dimension[] = { 1, instance.getVehiclesNr(), instance.getCustomersNr(), 1, 1 };
-		tabuList = new SimpleTabuList(instance.getParameters().getTenure());
-//		// Create Tabu Search object
-		search = new MySearchProgram(initialSol, moveManager, objFunc, tabuList, false, outPrintSream);
-//		// Start solving
+		
+		if (this.listener != null) {
+			listener.newBestSolutionFound(initialSol.getRoutes(), initialSol.getCost().getDistance());
+		}
+		
+		// Create Tabu Search object
+		MySearchProgram search = new MySearchProgram(
+				initialSol, 
+				new MyMoveManager(), 
+				new MyObjectiveFunction(), 
+				new SimpleTabuList(instance.getTenure()), 
+				false, 
+				null, 
+				listener
+				);
+		
+		// Start solving
 		search.tabuSearch.setIterationsToGo(instance.getParameters().getIterations());
 		search.tabuSearch.startSolving();
+		System.out.println("END");
 		duration.stop();
+		
+		long nanos = ManagementFactory.getThreadMXBean().getThreadCpuTime(Thread.currentThread().getId());
+		System.out.println("It's nanosecond:" + nanos);
 //		initialSol.getCost().setC();
 //		objFunc = new MyObjectiveFunction(instance, false);
 //		search = new MySearchProgram(instance, search.getSolution(), moveManager, objFunc, tabuList, false,
@@ -63,7 +73,7 @@ public class SVRPTW {
 //
 //		// Count routes
 //		int routesNr = 0;
-//		ArrayList<Route> list = search.getFeasibleRoutes();
+//		list = search.getFeasibleRoutes();
 //		System.out.println("End.");
 //		System.out.println();
 //		for (int i = 0; i < list.size(); ++i)
@@ -77,9 +87,9 @@ public class SVRPTW {
 
 	}
 	
-	public static void main(String[] args) {
-    	Test test = new Test();
-    	test.testS();
-    	new SVRPTW(test.m);
-	}
+//	public static void main(String[] args) {
+//    	Test test = new Test();
+//    	test.testS();
+//    	new SVRPTW(test.m);
+//	}
 }

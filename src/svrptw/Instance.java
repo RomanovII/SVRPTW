@@ -228,6 +228,10 @@ public class Instance {
 		return parameters.getScale();
 	}
 	
+	public int getTenure() {
+		return parameters.getTenure();
+	}
+	
 	public double getGamma(double shape, double scale, double value) {
 		if (shape == 0 || scale == 0) {
 //			System.out.println("WTF???");

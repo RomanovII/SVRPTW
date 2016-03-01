@@ -27,9 +27,11 @@ public class MySearchProgram implements TabuSearchListener{
 	public MyMoveManager manager;
 	public DecimalFormat df = new DecimalFormat("#.##");
 	public int  counter;
-
-	public MySearchProgram(Solution initialSol, MoveManager moveManager, ObjectiveFunction objFunc, TabuList tabuList, boolean minmax, PrintStream outPrintStream)
+	public MethodListener externalListener;
+	
+	public MySearchProgram(Solution initialSol, MoveManager moveManager, ObjectiveFunction objFunc, TabuList tabuList, boolean minmax, PrintStream outPrintStream, MethodListener listener)
 	{
+		externalListener = listener;
 		tabuSearch = new SingleThreadedTabuSearch(initialSol, moveManager, objFunc, tabuList, new BestEverAspirationCriteria(), minmax );
 		feasibleIndex = -1;
 		feasibleObj = new double[] {Double.MAX_VALUE, Double.MAX_VALUE};
@@ -74,6 +76,8 @@ public class MySearchProgram implements TabuSearchListener{
 			feasibleRoutes = cloneRoutes(sol.getRoutes());
 			// set the new best to the current one
 			tabuSearch.setBestSolution(sol);
+			
+			externalListener.newBestSolutionFound(sol.getRoutes(), sol.getCost().getDistance());
 			System.out.println("Best: ");
 			for (int i = 0; i < sol.getRoutesNr(); ++i) {
 				System.out.println(sol.getRoute(i).printRoute());
