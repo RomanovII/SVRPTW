@@ -1,0 +1,53 @@
+package debug;
+
+import javax.swing.*;
+
+import svrptw.Route;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+@SuppressWarnings("serial")
+public class Graphic extends JPanel{
+	public int size;
+	public int[] x = new int[101];
+	public int[] y = new int[101];
+	ArrayList<Route> ans = new ArrayList<Route>();
+	
+	public static int[] convertIntegers(ArrayList<Integer> integers)
+	{
+	    int[] ret = new int[integers.size()];
+	    for (int i=0; i < ret.length; i++)
+	    {
+	        ret[i] = integers.get(i).intValue();
+	    }
+	    return ret;
+	}
+	
+	@Override
+	protected void paintComponent(Graphics gh) {
+		Graphics2D drp = (Graphics2D) gh;
+		ArrayList<Integer> xo = new ArrayList<Integer>();
+		ArrayList<Integer> yo = new ArrayList<Integer>();
+		for (int i = 0; i < ans.size(); ++i) {
+			Route route = ans.get(i);
+			xo.add(x[0]);
+			yo.add(y[0]);
+			for (int j = 0; j < route.getCustomersLength(); ++j) {
+				int index = route.getCustomerNr(j);
+				xo.add(x[index]);
+				yo.add(y[index]);
+			}
+		}
+		xo.add(x[0]);
+		yo.add(y[0]);
+		drp.setColor(new Color(0, 0, 255));
+		drp.setStroke(new BasicStroke(10, 1, 0));
+		for (int i = 0; i < 101; ++i) {
+			drp.drawLine(x[i], y[i], x[i], y[i]);
+		}
+		drp.setColor(new Color(0));
+		drp.setStroke(new BasicStroke(1));
+		drp.drawPolyline(convertIntegers(xo), convertIntegers(yo), yo.size());
+	}
+}
