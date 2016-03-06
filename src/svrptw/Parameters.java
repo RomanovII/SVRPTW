@@ -20,7 +20,7 @@ public class Parameters {
 	public Parameters() {
 		this.precision = 1E-2;
 		this.coefDelay = 1;
-		this.coefEarliness = 10;
+		this.coefEarliness = 0.05;
 		this.coefDistance = 1;
 		this.coefOvertime = 0;
 		this.coefVechile = 0;

@@ -3,11 +3,15 @@ package tabu;
 //import java.util.Random;
 import java.util.ArrayList;
 
+import javax.swing.plaf.SliderUI;
+import javax.xml.bind.JAXB;
+
 import org.coinor.opents.SolutionAdapter;
 
 import svrptw.Cost;
 import svrptw.Customer;
 import svrptw.Instance;
+import svrptw.MethodListener;
 import svrptw.Route;
 import svrptw.Vehicle;
 
@@ -52,7 +56,50 @@ public class MySolution extends SolutionAdapter {
 			Vehicle vehicle = new Vehicle();
 			vehicle.setCapacity(instance.getVechileCapacity());
 			r.setAssignedVehicle(vehicle);
+			r.addCustomer(instance.getDepot());
+			r.addCustomer(instance.getDepot());
 			routes.add(r);
+		}
+	}
+	
+	public void startSolution() {
+		ArrayList<Customer> unroutedCustomers = instance.getSortedCustomers();
+		
+		for (Customer unroutedCustomer : unroutedCustomers) {
+			int bestNumRoute = -1;
+			int bestNumPosition = -1;
+			double bestInsertMeasures = Double.MAX_VALUE;
+			for (Route route : routes) {	
+				Cost preCost = new Cost(route.getCost());
+				if (!isFeasibleInsert(unroutedCustomer, 0, route)) {
+					continue;
+				}
+				for (int pos = 1; pos < route.getCustomersLength(); ++pos) {
+					route.addCustomer(unroutedCustomer, pos);
+					Cost newCost = route.getCost();
+					
+					double m11 = newCost.getDistance() - preCost.getDistance();
+					double m12 = newCost.getExpectedTime() - preCost.getExpectedTime();
+					double m13 = instance.getCoefDelay() * (newCost.getDelay() - preCost.getDelay()) 
+							+ instance.getCoefEarliness() * (newCost.getEarliness() - preCost.getEarliness());
+					double newInsertMeasures = m11 + m12 + m13;
+					if (bestInsertMeasures > newInsertMeasures) {
+						bestInsertMeasures = newInsertMeasures;
+						bestNumPosition = pos;
+						bestNumRoute = route.getIndex();
+					}
+					
+					route.removeCustomer(pos);
+				}
+			}
+			if (bestNumPosition == -1 || bestNumRoute == -1) {
+				System.out.println("Error 1. Step 1 - Initialization algorithm. Insert " + bestNumPosition + " into " + bestNumRoute + " route.");
+			}
+			else {
+				routes.get(bestNumRoute).addCustomer(unroutedCustomer, bestNumPosition);
+				System.out.println(unroutedCustomer.getNumber() + ": E " + routes.get(bestNumRoute).getCost().getEarliness() + ", D " + routes.get(bestNumRoute).getCost().getDelay() + 
+						", Cap " + routes.get(bestNumRoute).getCost().getCapacity() + ", Insert " + bestNumPosition + " into " + bestNumRoute + " route.");
+			}
 		}
 	}
 

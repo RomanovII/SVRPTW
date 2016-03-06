@@ -38,12 +38,12 @@ public class SVRPTW extends Thread{
 		
 		MySolution initialSol = new MySolution();
 		initialSol.initializeRoutes();
-		initialSol.buildInitRoutes();
+		initialSol.startSolution();
+		//initialSol.buildInitRoutes();
 		
 		if (this.listener != null) {
-			listener.newBestSolutionFound(initialSol.getRoutes(), initialSol.getCost().getDistance());
+			listener.newBestSolutionFound(initialSol.getRoutes(), "Step 1");
 		}
-		
 		// Create Tabu Search object
 		MySearchProgram search = new MySearchProgram(
 				initialSol, 

@@ -41,10 +41,12 @@ public class Graphic extends JPanel{
 		}
 		xo.add(x[0]);
 		yo.add(y[0]);
-		drp.setColor(new Color(0, 0, 255));
 		drp.setStroke(new BasicStroke(10, 1, 0));
 		for (int i = 0; i < 101; ++i) {
+			drp.setColor(new Color(0, 0, 255));
 			drp.drawLine(x[i], y[i], x[i], y[i]);
+			drp.setColor(new Color(255, 0, 0));
+			drp.drawString(Integer.toString(i), x[i] + 1, y[i] - 5);
 		}
 		drp.setColor(new Color(0));
 		drp.setStroke(new BasicStroke(1));

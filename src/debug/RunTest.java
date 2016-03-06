@@ -25,7 +25,7 @@ public class RunTest extends JFrame  implements MethodListener {
 	
 	private void readFile(String filename) {
 		try {
-			Scanner in = new Scanner(new FileReader(filename));
+			Scanner in = new Scanner(new FileReader(System.getProperty("user.dir")+ "\\input\\" + filename));
 
 			// skip useless lines
 			in.nextLine(); // skip filename
@@ -91,8 +91,8 @@ public class RunTest extends JFrame  implements MethodListener {
 		readFile(filename);
 		
 		for (int i = 0; i < size; ++i){
-			x[i] = 10 * x[i];
-			y[i] = 10 * y[i];
+			x[i] = 6 * x[i] + 5;
+			y[i] = 6 * y[i] + 5;
 		}
 		graph.x = x;
 		graph.y = y;
@@ -114,29 +114,29 @@ public class RunTest extends JFrame  implements MethodListener {
 		jcp.add(graph, BorderLayout.CENTER);
 		jcp.add(cost, BorderLayout.PAGE_START);
 		
-		setSize(1080, 1080);
+		setSize(600, 600);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	@Override
-	public void newBestSolutionFound(ArrayList<Route> routes, double resultCost) {
+	public void newBestSolutionFound(ArrayList<Route> routes, String info) {
 		// TODO Auto-generated method stub
 		graph.ans = routes;
-		cost.setText(Double.toString(resultCost));
+		cost.setText(info);
 		this.repaint();
 	}
 
 	@Override
-	public void newCurrentSolutionFound(ArrayList<Route> routes, double resultCost) {
+	public void newCurrentSolutionFound(ArrayList<Route> routes, String info) {
 		// TODO Auto-generated method stub
 		graph.ans = routes;
-		cost.setText(Double.toString(resultCost));
+		cost.setText(info);
 		this.repaint();
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		String filename = "D:/Workspace/Eclipse/SVRPTW/input/C101.txt";
+		String filename = "C101.txt";
 		Integer count = 101;
 		
 		RunTest runtest = new RunTest();

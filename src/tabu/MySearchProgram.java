@@ -77,7 +77,7 @@ public class MySearchProgram implements TabuSearchListener{
 			// set the new best to the current one
 			tabuSearch.setBestSolution(sol);
 			
-			externalListener.newBestSolutionFound(sol.getRoutes(), sol.getCost().getDistance());
+			externalListener.newBestSolutionFound(sol.getRoutes(), Double.toString(sol.getCost().getDistance()));
 			System.out.println("Best: ");
 			for (int i = 0; i < sol.getRoutesNr(); ++i) {
 				System.out.println(sol.getRoute(i).printRoute());
