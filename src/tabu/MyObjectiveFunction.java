@@ -21,7 +21,8 @@ public class MyObjectiveFunction implements ObjectiveFunction {
 			objectiveValue = sol.getObjectiveValue();
 			move.undoOperation( sol );
 		}
-		return new double[] { objectiveValue[0], objectiveValue[1] };
+//		System.out.println("Current Sol: " + objectiveValue[0] + " " + objectiveValue[1]);
+		return new double[] { objectiveValue[0], objectiveValue[1]/*, objectiveValue[2], objectiveValue[3]*/ };
 	}
 	
 } // end class MyObjectiveFunction

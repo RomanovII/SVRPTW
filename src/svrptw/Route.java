@@ -75,7 +75,7 @@ public class Route {
 		StringBuffer print = new StringBuffer();
 		// print.append("Route[" + index + ", " + (getCustomersLength()) +
 		// "]=");
-		print.append(this.depot.getNumber() + " ");
+//		print.append(this.depot.getNumber() + " ");
 		for (int i = 0; i < this.customers.size(); ++i) {
 			print.append(this.customers.get(i).getNumber()/*
 														 * + "(" +
@@ -106,6 +106,10 @@ public class Route {
 		customer.setIsTaken(true);
 		this.customers.add(customer);
 		this.evaluate();
+	}
+	
+	public void addDepot(Depot depot) {
+		this.customers.add(depot);
 	}
 
 	public void addCustomer(Customer customer, int index) {
@@ -160,39 +164,38 @@ public class Route {
 	}
 
 	public void evaluate() {
-		double distance = 0;
-		double capacity = 0;
-		double expectedTime = 0;
-		double varianceTime = 0;
-		double delay = 0;
-		double earliness = 0;
-		double overtime = 0;
-		int serviceTime = 0;
+		Customer curCust, preCust;
 		Instance instance = Instance.getInstance();
-		double shape = 0;
+		int lowerBound, shiftedLowerBound, upperBound, shiftedUpperBound;
+		double earlinessTemp, delayTemp, overtimeTemp;
 		double scale = instance.getScale();
+		double shape = instance.getShape();
 		
+		Cost cost = new Cost();
+		cost.setVechile(this.cost.getVechile());
+
 		for (int i = 1; i < this.customers.size() - 1; ++i) {
-			Customer curCust = this.customers.get(i - 1);
-			Customer preCust = this.customers.get(i);
-			distance += instance.getDistance(preCust.getNumber(),
-					curCust.getNumber());
-			capacity += curCust.getCapacity();
+			preCust = this.customers.get(i - 1);
+			curCust = this.customers.get(i);
+
+			cost.addDistance(instance.getDistance(preCust.getNumber(),
+					curCust.getNumber()));
+			cost.addCapacity(curCust.getCapacity());
 			shape += instance.getShape()
 					* instance
 							.getTime(preCust.getNumber(), curCust.getNumber())
 					/ scale;
-			expectedTime += instance.getTime(preCust.getNumber(),
-					curCust.getNumber());
-			varianceTime += instance.getTime(preCust.getNumber(),
+			cost.addExpectedTime(instance.getTime(preCust.getNumber(),
+					curCust.getNumber()));
+			cost.addVarianceTime(instance.getTime(preCust.getNumber(),
 					curCust.getNumber())
-					* scale;
+					* scale);
 
-			// earliness
-			int lowerBound = curCust.getStartTw();
-			int shiftedLowerBound = lowerBound - serviceTime;
-			double earlinessTemp = 0;
-			if (lowerBound <= serviceTime) {
+			/* Earliness */
+			lowerBound = curCust.getStartTw();
+			shiftedLowerBound = lowerBound - cost.getTotalServiceTime();
+			earlinessTemp = 0;
+			if (lowerBound <= cost.getTotalServiceTime()) {
 				earlinessTemp = 0;
 			} else {
 				earlinessTemp = shiftedLowerBound
@@ -202,18 +205,19 @@ public class Route {
 						* instance
 								.getGamma(shape + 1, scale, shiftedLowerBound);
 			}
-//			if (earlinessTemp <= new Double(0)) {
-//				System.out.println("Error 2: Route evaluate. Earliness < 0 : " + earlinessTemp);
-//				earlinessTemp = 0;
-//			}
-			earliness += earlinessTemp;
+			// if (earlinessTemp <= new Double(0)) {
+			// System.out.println("Error 2: Route evaluate. Earliness < 0 : "
+			// + earlinessTemp);
+			// earlinessTemp = 0;
+			// }
+			cost.addEarliness(earlinessTemp);
 
-			// delay
-			int upperBound = curCust.getEndTw();
-			int shiftedUpperBound = upperBound - serviceTime;
-			double delayTemp = 0;
-			if (upperBound <= serviceTime) {
-				delayTemp = expectedTime + serviceTime - upperBound;
+			/* Delay */
+			upperBound = curCust.getEndTw();
+			shiftedUpperBound = upperBound - cost.getTotalServiceTime();
+			delayTemp = 0;
+			if (upperBound <= cost.getTotalServiceTime()) {
+				delayTemp = cost.getExpectedTime() - shiftedUpperBound;
 			} else {
 				delayTemp = shape
 						* scale
@@ -223,52 +227,48 @@ public class Route {
 						* (1 - instance.getGamma(shape, scale,
 								shiftedUpperBound));
 			}
-//			if (delayTemp <= new Double(0)) {
-//				System.out.println("Error 3: Route evaluate. Delay < 0 : " + delayTemp);
-//				delayTemp = 0;
-//			}
-			delay += delayTemp;
+			// if (delayTemp <= new Double(0)) {
+			// System.out.println("Error 3: Route evaluate. Delay < 0 : "
+			// + delayTemp);
+			// delayTemp = 0;
+			// }
+			cost.addDelay(delayTemp);
 
-			serviceTime += curCust.getServiceDuration();
+			cost.addTotalServiceTime(new Double(curCust.getServiceDuration()).intValue());
 		}
-		
-		delay = new BigDecimal(delay).setScale(3, RoundingMode.HALF_UP).doubleValue();
-		earliness = new BigDecimal(earliness).setScale(3, RoundingMode.HALF_UP).doubleValue();
-		
-		double zero = 0;
-		if (earliness < zero) {
-			System.out.println("Error 4: Route evaluate. Earliness < 0 : " + earliness);
+		preCust = this.customers.get(this.customers.size() - 2);
+		curCust = this.customers.get(this.customers.size() - 1);
+		/* Overtime */
+		upperBound = curCust.getEndTw();
+		shiftedUpperBound = upperBound - cost.getTotalServiceTime();
+		if (upperBound <= cost.getTotalServiceTime()) {
+			overtimeTemp = cost.getExpectedTime() - shiftedUpperBound;
+		} else {
+			overtimeTemp = shape
+					* scale
+					* (1 - instance.getGamma(shape + 1, scale,
+							shiftedUpperBound)) - shiftedUpperBound
+					* (1 - instance.getGamma(shape, scale, shiftedUpperBound));
 		}
-		if (delay < zero) {
-			System.out.println("Error 5: Route evaluate. Delay < 0 : " + delay);
-		}
+		cost.setOvertime(overtimeTemp);
 		
-		this.cost.setDistance(distance);
-		this.cost.setCapacity(capacity);
-		this.cost.setExpectedTime(expectedTime);
-		this.cost.setVarianceTime(varianceTime);
-		this.cost.setTotalServiceTime(serviceTime);
-		this.cost.setDelay(delay);
-		this.cost.setEarliness(earliness);
+		cost.rangeDelay();
+		cost.rangeEarliness();
+		cost.rangeOvertime();
+		
+		if (new Double(cost.getEarliness() * 1000).intValue() < 0) {
+			System.out.println("Error 4: Route evaluate. Earliness < 0 : "
+					+ cost.getEarliness());
+		}
+		if (new Double(cost.getDelay() * 1000).intValue() < 0) {
+			System.out.println("Error 5: Route evaluate. Delay < 0 : "
+					+ cost.getDelay());
+		}
+		if (new Double(cost.getOvertime() * 1000).intValue() < 0) {
+			System.out.println("Error 6: Route evaluate. Overtime < 0 : "
+					+ cost.getDelay() + " " +  new Double(cost.getOvertime()).intValue());
+		}
+
+		this.cost = cost;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -25,7 +25,7 @@ public class RunTest extends JFrame  implements MethodListener {
 	
 	private void readFile(String filename) {
 		try {
-			Scanner in = new Scanner(new FileReader(System.getProperty("user.dir")+ "\\input\\" + filename));
+			Scanner in = new Scanner(new FileReader(/*System.getProperty("user.dir") + "\\input\\"*/"/home/ilya/workspace/SVRPTW/input/" + filename));
 
 			// skip useless lines
 			in.nextLine(); // skip filename
@@ -104,7 +104,7 @@ public class RunTest extends JFrame  implements MethodListener {
 	}
 
 	public RunTest() {
-		super("График по банкоматам");
+		super("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
 		JPanel jcp = new JPanel(new BorderLayout());
 		setContentPane(jcp);
 		
@@ -136,7 +136,7 @@ public class RunTest extends JFrame  implements MethodListener {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		String filename = "C101.txt";
+		String filename = "RC101.txt";
 		Integer count = 101;
 		
 		RunTest runtest = new RunTest();

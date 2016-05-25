@@ -20,8 +20,10 @@ public class MySolution extends SolutionAdapter {
 	private Instance instance = Instance.getInstance();
 	private ArrayList<Route> routes;
 	private Cost cost;
-	private double coefNu;
-	private double capacityViol;
+	public double coefNu;
+	public double capacityViol;
+
+	// private double[] objectiveValue;
 
 	// public MySolution(){} //This is needed otherwise java gives random
 	// errors.. YES we love java <3
@@ -38,12 +40,13 @@ public class MySolution extends SolutionAdapter {
 		MySolution copy = (MySolution) super.clone();
 		copy.cost = new Cost(this.cost);
 		copy.routes = new ArrayList<Route>(this.routes.size());
-		for (Route route : this.routes) copy.routes.add(new Route(route));
+		for (Route route : this.routes)
+			copy.routes.add(new Route(route));
 		copy.coefNu = new Double(this.coefNu);
 		copy.capacityViol = new Double(this.capacityViol);
 		return copy;
 	}
-	
+
 	public void initializeRoutes() {
 		int vehiclesNr = instance.getVehiclesNr();
 		routes = new ArrayList<Route>(vehiclesNr);
@@ -56,20 +59,20 @@ public class MySolution extends SolutionAdapter {
 			Vehicle vehicle = new Vehicle();
 			vehicle.setCapacity(instance.getVechileCapacity());
 			r.setAssignedVehicle(vehicle);
-			r.addCustomer(instance.getDepot());
-			r.addCustomer(instance.getDepot());
+			r.addDepot(instance.getDepot());
+			r.addDepot(instance.getDepot());
 			routes.add(r);
 		}
 	}
-	
+
 	public void startSolution() {
 		ArrayList<Customer> unroutedCustomers = instance.getSortedCustomers();
-		
+
 		for (Customer unroutedCustomer : unroutedCustomers) {
 			int bestNumRoute = -1;
 			int bestNumPosition = -1;
 			double bestInsertMeasures = Double.MAX_VALUE;
-			for (Route route : routes) {	
+			for (Route route : routes) {
 				Cost preCost = new Cost(route.getCost());
 				if (!isFeasibleInsert(unroutedCustomer, 0, route)) {
 					continue;
@@ -77,30 +80,45 @@ public class MySolution extends SolutionAdapter {
 				for (int pos = 1; pos < route.getCustomersLength(); ++pos) {
 					route.addCustomer(unroutedCustomer, pos);
 					Cost newCost = route.getCost();
-					
+
 					double m11 = newCost.getDistance() - preCost.getDistance();
-					double m12 = newCost.getExpectedTime() - preCost.getExpectedTime();
-					double m13 = instance.getCoefDelay() * (newCost.getDelay() - preCost.getDelay()) 
-							+ instance.getCoefEarliness() * (newCost.getEarliness() - preCost.getEarliness());
+					double m12 = newCost.getExpectedTime()
+							- preCost.getExpectedTime();
+					double m13 = instance.getCoefDelay()
+							* (newCost.getDelay() - preCost.getDelay())
+							+ instance.getCoefEarliness()
+							* (newCost.getEarliness() - preCost.getEarliness());
 					double newInsertMeasures = m11 + m12 + m13;
 					if (bestInsertMeasures > newInsertMeasures) {
 						bestInsertMeasures = newInsertMeasures;
 						bestNumPosition = pos;
 						bestNumRoute = route.getIndex();
 					}
-					
+
 					route.removeCustomer(pos);
 				}
 			}
 			if (bestNumPosition == -1 || bestNumRoute == -1) {
-				System.out.println("Error 1. Step 1 - Initialization algorithm. Insert " + bestNumPosition + " into " + bestNumRoute + " route.");
-			}
-			else {
-				routes.get(bestNumRoute).addCustomer(unroutedCustomer, bestNumPosition);
-				System.out.println(unroutedCustomer.getNumber() + ": E " + routes.get(bestNumRoute).getCost().getEarliness() + ", D " + routes.get(bestNumRoute).getCost().getDelay() + 
-						", Cap " + routes.get(bestNumRoute).getCost().getCapacity() + ", Insert " + bestNumPosition + " into " + bestNumRoute + " route.");
+				System.out
+						.println("Error 1. Step 1 - Initialization algorithm. Insert "
+								+ bestNumPosition
+								+ " into "
+								+ bestNumRoute
+								+ " route.");
+			} else {
+				routes.get(bestNumRoute).addCustomer(unroutedCustomer,
+						bestNumPosition);
+				System.out.println(unroutedCustomer.getNumber() + ": E "
+						+ routes.get(bestNumRoute).getCost().getEarliness()
+						+ ", D "
+						+ routes.get(bestNumRoute).getCost().getDelay()
+						+ ", Cap "
+						+ routes.get(bestNumRoute).getCost().getCapacity()
+						+ ", Insert " + bestNumPosition + " into "
+						+ bestNumRoute + " route.");
 			}
 		}
+		evaluateAbsolutely();
 	}
 
 	public void buildInitRoutes() {
@@ -119,7 +137,7 @@ public class MySolution extends SolutionAdapter {
 		evaluateAbsolutely();
 		int routeIndex = 0;
 		ArrayList<Customer> removeList = new ArrayList<>();
-		
+
 		while (unroutedCustomers.size() > 0) {
 			if (routeIndex == instance.getVehiclesNr()) {
 				System.out.println("limit");
@@ -139,20 +157,20 @@ public class MySolution extends SolutionAdapter {
 					removeList.add(cust);
 				}
 			}
-			
+
 			for (Customer cust : removeList) {
 				unroutedCustomers.remove(cust);
 			}
-			
+
 			routes.set(routeIndex, newRoute);
 			++routeIndex;
 			evaluateObjectiveValue(newRoute.getCost(), new Cost());
 			System.out.println(newRoute.printRoute());
 			System.out.println(newRoute.printRouteCost());
 		}
-		//trimRoutes(this.routes);
+		// trimRoutes(this.routes);
 	}
-	
+
 	public void buildInitialRoutes() {
 		ArrayList<Customer> unroutedCustomers = new ArrayList<Customer>(
 				instance.getSortedCustomers());
@@ -160,7 +178,7 @@ public class MySolution extends SolutionAdapter {
 		int routeIndex = 0;
 
 		ArrayList<Customer> removeList = new ArrayList<>();
-		
+
 		while (unroutedCustomers.size() > 0) {
 			if (routeIndex == instance.getVehiclesNr()) {
 				System.out.println("limit");
@@ -180,18 +198,18 @@ public class MySolution extends SolutionAdapter {
 					removeList.add(cust);
 				}
 			}
-			
+
 			for (Customer cust : removeList) {
 				unroutedCustomers.remove(cust);
 			}
-			
+
 			routes.set(routeIndex, newRoute);
 			++routeIndex;
 			evaluateObjectiveValue(newRoute.getCost(), new Cost());
 			System.out.println(newRoute.printRoute());
 			System.out.println(newRoute.printRouteCost());
 		}
-		//trimRoutes(this.routes);
+		// trimRoutes(this.routes);
 	}
 
 	private boolean isFeasibleInsert(Customer cust, int pos, Route route) { // WHAT?
@@ -372,174 +390,70 @@ public class MySolution extends SolutionAdapter {
 	}
 
 	public void evaluateAbsolutely() {
+		this.cost = new Cost();
 		for (Route route : this.routes) {
-			evaluateRoute(route);
+			evaluateAbsRoute(route);
 		}
+//		System.out.println("Current Sol: " + this.getObjectiveValue()[0] + " " + this.getObjectiveValue()[1]);
 	}
 
-	private void evaluateRoute(Route route) {
-		evaluateRoute(route, 0);
-	}
-
-	public void evaluateInsertRoute(Route route, Customer customer,
-			int position) {
-		route.addCustomer(customer, position);
-		evaluateRoute(route, position);
-	} // end method evaluate insert route
-
-	public void evaluateDeleteRoute(Route route, Customer customer,
-			int position) {
-		route.removeCustomer(position);
-		evaluateRoute(route, position);
-	} // end method evaluate delete route
-
-	private void evaluateRoute(Route route, int pos) { // WHAT?
+	public void evaluateInsertRoute(Route route, Customer customer, int position) {
 		Cost prevCost = new Cost(route.getCost());
-		route.getCost().clear();
-
-		if (route.isEmpty()) {
-			evaluateObjectiveValue(route.getCost(), prevCost);
-			return;
-		}
-
-		Customer prevCust;
-		if (pos == 0) {
-			prevCust = instance.getDepot();
-		} else {
-			prevCust = route.getCustomer(pos - 1);
-		}
-
-		for (int i = pos; i < route.getCustomersLength(); ++i) {
-			Customer cust = route.getCustomer(i);
-			int numCust = cust.getNumber();
-			int numPrevCust = prevCust.getNumber();
-
-			double distance = prevCust.getCost().getDistance()
-					+ instance.getDistance(numPrevCust, numCust);
-			double capacity = prevCust.getCost().getCapacity()
-					+ cust.getCapacity();
-
-			double shape = instance.getShape()
-					* instance.getTime(numPrevCust, numCust);
-			double scale = instance.getScale();
-
-			double expectedTime = prevCust.getCost().getExpectedTime() + shape
-					* scale;
-			double varianceTime = prevCust.getCost().getVarianceTime() + shape
-					* scale * scale;
-
-			int totalServiceTime = prevCust.getCost().getTotalServiceTime();
-			int lowerBound = cust.getStartTw();
-			int upperBound = cust.getEndTw();
-			int shiftedLowerBound = lowerBound - totalServiceTime;
-			int shiftedUpperBound = upperBound - totalServiceTime;
-
-			double delay = prevCust.getCost().getDelay();
-			if (upperBound <= totalServiceTime) {
-				delay += expectedTime + totalServiceTime - upperBound;
-			} else {
-				delay += shape
-						* scale
-						* (1 - instance.getGamma(shape + 1, scale,
-								shiftedUpperBound))
-						- shiftedUpperBound
-						* (1 - instance.getGamma(shape, scale,
-								shiftedUpperBound));
-			}
-
-			double earliness = prevCust.getCost().getEarliness();
-			if (lowerBound <= totalServiceTime) {
-				earliness += 0;
-			} else {
-				earliness += shiftedLowerBound
-						* instance.getGamma(shape, scale, shiftedLowerBound)
-						- shape
-						* scale
-						* instance
-								.getGamma(shape + 1, scale, shiftedLowerBound);
-			}
-
-			totalServiceTime += cust.getServiceDuration();
-
-			cust.getCost().setDistance(distance);
-			cust.getCost().setCapacity(capacity);
-			cust.getCost().setExpectedTime(expectedTime);
-			cust.getCost().setVarianceTime(varianceTime);
-			cust.getCost().setTotalServiceTime(totalServiceTime);
-			cust.getCost().setDelay(delay);
-			cust.getCost().setEarliness(earliness);
-			prevCust = cust;
-		}
-
-		Customer cust = instance.getDepot();
-		int numCust = cust.getNumber();
-		int numPrevCust = prevCust.getNumber();
-
-		double distance = prevCust.getCost().getDistance()
-				+ instance.getDistance(numPrevCust, numCust);
-		double capacity = prevCust.getCost().getCapacity() + cust.getCapacity();
-
-		double shape = instance.getShape()
-				* instance.getTime(numPrevCust, numCust);
-		double scale = instance.getScale();
-
-		double expectedTime = prevCust.getCost().getExpectedTime() + shape
-				* scale;
-		double varianceTime = prevCust.getCost().getVarianceTime() + shape
-				* scale * scale;
-
-		int totalServiceTime = prevCust.getCost().getTotalServiceTime();
-		// int lowerBound = cust.getStartTw();
-		int upperBound = cust.getEndTw();
-		// int shiftedLowerBound = lowerBound - totalServiceTime;
-		int shiftedUpperBound = upperBound - totalServiceTime;
-
-		double delay = prevCust.getCost().getDelay();
-
-		double overtime;
-		if (upperBound <= totalServiceTime) {
-			overtime = expectedTime + totalServiceTime - upperBound;
-		} else {
-			overtime = shape
-					* scale
-					* (1 - instance.getGamma(shape + 1, scale,
-							shiftedUpperBound)) - shiftedUpperBound
-					* (1 - instance.getGamma(shape, scale, shiftedUpperBound));
-		}
-
-		double earliness = prevCust.getCost().getEarliness();
-		// if (lowerBound <= totalServiceTime) {
-		// earliness += 0;
-		// } else {
-		// earliness += shiftedLowerBound * instance.getGamma(shape, scale,
-		// shiftedLowerBound)
-		// - shape * scale * instance.getGamma(shape + 1, scale,
-		// shiftedLowerBound);
-		// }
-
-		totalServiceTime += cust.getServiceDuration();
-
-		route.getCost().setDistance(distance);
-		route.getCost().setCapacity(capacity);
-		route.getCost().setExpectedTime(expectedTime);
-		route.getCost().setVarianceTime(varianceTime);
-		route.getCost().setTotalServiceTime(totalServiceTime);
-		route.getCost().setDelay(delay);
-		route.getCost().setEarliness(earliness);
-		route.getCost().setVechile(1);
-		route.getCost().setOvertime(overtime);
-		route.getCost().calculateTotalCost();
+		route.addCustomer(customer, position);
 		evaluateObjectiveValue(route.getCost(), prevCost);
+	}
+
+	public void evaluateDeleteRoute(Route route, Customer customer, int position) {
+		Cost prevCost = new Cost(route.getCost());
+		route.removeCustomer(position);
+		evaluateObjectiveValue(route.getCost(), prevCost);
+	}
+
+	private void evaluateAbsRoute(Route route) {
+		route.evaluate();
+		evaluateAbsObjectiveValue(route.getCost());
 	}
 
 	private void calcCapacityViol() {
 		capacityViol = 0;
 		for (Route route : routes) {
-			double capacViol = route.getCost().getCapacity() - route.getAssignedVehicle().getCapacity();
+			double capacViol = route.getCost().getCapacity()
+					- route.getAssignedVehicle().getCapacity();
 			capacityViol += capacViol > 0 ? capacViol : 0;
 		}
 	}
-	
+
+	private void evaluateAbsObjectiveValue(Cost cost) {
+		double distance = this.cost.getDistance() + cost.getDistance();
+		double capacity = this.cost.getCapacity() + cost.getCapacity();
+		double expectedTime = this.cost.getExpectedTime()
+				+ cost.getExpectedTime();
+		double varianceTime = this.cost.getVarianceTime()
+				+ cost.getVarianceTime();
+		int totalServiceTime = this.cost.getTotalServiceTime()
+				+ cost.getTotalServiceTime();
+		double delay = this.cost.getDelay() + cost.getDelay();
+		double earliness = this.cost.getEarliness() + cost.getEarliness();
+		double vechile = this.cost.getVechile() + cost.getVechile();
+		double overtime = this.cost.getOvertime() + cost.getOvertime();
+		this.cost.setDistance(distance);
+		this.cost.setCapacity(capacity);
+		this.cost.setExpectedTime(expectedTime);
+		this.cost.setVarianceTime(varianceTime);
+		this.cost.setTotalServiceTime(totalServiceTime);
+		this.cost.setDelay(delay);
+		this.cost.setEarliness(earliness);
+		this.cost.setVechile(vechile);
+		this.cost.setOvertime(overtime);
+		this.cost.calculateTotalCost();
+		double obj2 = this.cost.getObjectiveValue(this.coefNu);
+		calcCapacityViol();
+		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
+				obj2 });
+		// this.objectiveValue = new double[] {obj2 + this.coefNu *
+		// capacityViol, obj2};
+	}
+
 	private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
 		double distance = this.cost.getDistance() + cost.getDistance()
 				- prevCost.getDistance();
@@ -571,22 +485,25 @@ public class MySolution extends SolutionAdapter {
 		this.cost.calculateTotalCost();
 		double obj2 = this.cost.getObjectiveValue(this.coefNu);
 		calcCapacityViol();
-		setObjectiveValue(new double[] {capacityViol, obj2});
+		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
+				obj2/*, this.cost.getDistance(), this.coefNu*/ });
+		// this.objectiveValue = new double[] {obj2 + this.coefNu *
+		// capacityViol, obj2};
 	}
-	
-	public void updateParameters () {
-		if (this.cost.getCapacity() == 0) {
+
+	public void updateParameters() {
+		if (this.capacityViol == 0) {
 			this.coefNu = this.coefNu / (1 + this.instance.getCoefPhi());
-		}
-		else {
+		} else {
 			this.coefNu = this.coefNu * (1 + this.instance.getCoefPhi());
 		}
 	}
-	
+
 	public boolean isFeasible() {
 		boolean feasible = true;
 		for (Route route : routes) {
-			if (route.getCost().getCapacity() > route.getAssignedVehicle().getCapacity()) {
+			if (route.getCost().getCapacity() > route.getAssignedVehicle()
+					.getCapacity()) {
 				feasible = false;
 				break;
 			}

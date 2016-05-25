@@ -31,7 +31,7 @@ public class Parameters {
 		this.coefPhi = 0.5;
 		this.shape = 1;
 		this.scale = 1;
-		this.tenure = 25;
+		this.tenure = 7;
 		this.iterations = 500;
 	}
 

@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 
+import org.coinor.opents.ComplexTabuList;
 import org.coinor.opents.SimpleTabuList;
 import org.coinor.opents.TabuList;
 import org.coinor.opents.TabuSearch;
@@ -44,6 +45,7 @@ public class SVRPTW extends Thread{
 		if (this.listener != null) {
 			listener.newBestSolutionFound(initialSol.getRoutes(), "Step 1");
 		}
+
 		// Create Tabu Search object
 		MySearchProgram search = new MySearchProgram(
 				initialSol, 
@@ -51,7 +53,7 @@ public class SVRPTW extends Thread{
 				new MyObjectiveFunction(), 
 				new SimpleTabuList(instance.getTenure()), 
 				false, 
-				null, 
+				System.out, 
 				listener
 				);
 		

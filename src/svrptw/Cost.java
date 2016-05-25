@@ -1,5 +1,8 @@
 package svrptw;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * This class stores information about cost of a route or a group of routes. It
  * has total which is the sum of travel, capacityViol, durationViol, twViol.
@@ -72,12 +75,25 @@ public class Cost {
 		this.capacity = capacity;
 	}
 
+	public void addCapacity(double capacity) {
+		this.capacity += capacity;
+	}
+	
 	public double getDelay() {
 		return this.delay;
 	}
 
 	public void setDelay(double delay) {
 		this.delay = delay;
+	}
+	
+	public void addDelay(double delay) {
+		this.delay += delay;
+	}
+	
+	public void rangeDelay() {
+		this.delay = new BigDecimal(this.delay).setScale(3, RoundingMode.HALF_UP)
+				.doubleValue();
 	}
 
 	public double getEarliness() {
@@ -87,6 +103,15 @@ public class Cost {
 	public void setEarliness(double earliness) {
 		this.earliness = earliness;
 	}
+	
+	public void addEarliness(double earliness) {
+		this.earliness += earliness;
+	}
+	
+	public void rangeEarliness() {
+		this.earliness = new BigDecimal(this.earliness).setScale(3, RoundingMode.HALF_UP)
+				.doubleValue();
+	}
 
 	public double getDistance() {
 		return this.distance;
@@ -95,7 +120,10 @@ public class Cost {
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
-
+	
+	public void addDistance(double distance) {
+		this.distance += distance;
+	}
 	public double getVechile() {
 		return this.vechile;
 	}
@@ -110,6 +138,11 @@ public class Cost {
 
 	public void setOvertime(double overtime) {
 		this.overtime = overtime;
+	}
+	
+	public void rangeOvertime() {
+		this.overtime = new BigDecimal(this.overtime).setScale(3, RoundingMode.HALF_UP)
+				.doubleValue();
 	}
 
 	public double getServiceCost() {
@@ -164,6 +197,10 @@ public class Cost {
 	public void setExpectedTime(double expectedTime) {
 		this.expectedTime = expectedTime;
 	}
+	
+	public void addExpectedTime(double expectedTime) {
+		this.expectedTime += expectedTime;
+	}
 
 	public double getVarianceTime() {
 		return this.varianceTime;
@@ -171,6 +208,10 @@ public class Cost {
 
 	public void setVarianceTime(double varianceTime) {
 		this.varianceTime = varianceTime;
+	}
+	
+	public void addVarianceTime(double varianceTime) {
+		this.varianceTime += varianceTime;
 	}
 
 	public int getTotalServiceTime() {
@@ -180,12 +221,16 @@ public class Cost {
 	public void setTotalServiceTime(int serviceTime) {
 		this.serviceTime = serviceTime;
 	}
+	
+	public void addTotalServiceTime(int serviceTime) {
+		this.serviceTime += serviceTime;
+	}
 
 	public boolean checkFeasible() {
 		return true;
 	}
 
 	public double getObjectiveValue(double coefNu) {
-		return totalCost /*+ coefNu * capacity*/ ;
+		return this.totalCost;/* + coefNu * capacity; */
 	}
 }
