@@ -23,9 +23,7 @@ public class MySolution extends SolutionAdapter {
 	public double coefNu;
 	public double capacityViol;
 
-	// private double[] objectiveValue;
-
-	// public MySolution(){} //This is needed otherwise java gives random
+	// public MySolution(/){} //This is needed otherwise java gives random
 	// errors.. YES we love java <3
 
 	public MySolution() {
@@ -164,7 +162,7 @@ public class MySolution extends SolutionAdapter {
 
 			routes.set(routeIndex, newRoute);
 			++routeIndex;
-			evaluateObjectiveValue(newRoute.getCost(), new Cost());
+			evaluateObjectiveValue();
 			System.out.println(newRoute.printRoute());
 			System.out.println(newRoute.printRouteCost());
 		}
@@ -205,7 +203,7 @@ public class MySolution extends SolutionAdapter {
 
 			routes.set(routeIndex, newRoute);
 			++routeIndex;
-			evaluateObjectiveValue(newRoute.getCost(), new Cost());
+			evaluateObjectiveValue();
 			System.out.println(newRoute.printRoute());
 			System.out.println(newRoute.printRouteCost());
 		}
@@ -392,105 +390,117 @@ public class MySolution extends SolutionAdapter {
 	public void evaluateAbsolutely() {
 		this.cost = new Cost();
 		for (Route route : this.routes) {
-			evaluateAbsRoute(route);
+			route.evaluate();
 		}
+		evaluateObjectiveValue();
 //		System.out.println("Current Sol: " + this.getObjectiveValue()[0] + " " + this.getObjectiveValue()[1]);
 	}
 
 	public void evaluateInsertRoute(Route route, Customer customer, int position) {
-		Cost prevCost = new Cost(route.getCost());
 		route.addCustomer(customer, position);
-		evaluateObjectiveValue(route.getCost(), prevCost);
+		evaluateObjectiveValue();
 	}
 
 	public void evaluateDeleteRoute(Route route, Customer customer, int position) {
-		Cost prevCost = new Cost(route.getCost());
 		route.removeCustomer(position);
-		evaluateObjectiveValue(route.getCost(), prevCost);
+		evaluateObjectiveValue();
 	}
 
-	private void evaluateAbsRoute(Route route) {
-		route.evaluate();
-		evaluateAbsObjectiveValue(route.getCost());
-	}
+//	private void evaluateAbsRoute(Route route) {
+//		route.evaluate();
+//		evaluateAbsObjectiveValue(route.getCost());
+//	}
 
-	private void calcCapacityViol() {
-		capacityViol = 0;
+//	private void calcCapacityViol() {
+//		capacityViol = 0;
+//		for (Route route : routes) {
+//			double capacViol = route.getCost().getCapacity()
+//					- route.getAssignedVehicle().getCapacity();
+//			capacityViol += capacViol > 0 ? capacViol : 0;
+//		}
+//	}
+
+//	private void evaluateAbsObjectiveValue(Cost cost) {
+//		double distance = this.cost.getDistance() + cost.getDistance();
+//		double capacity = this.cost.getCapacity() + cost.getCapacity();
+//		double expectedTime = this.cost.getExpectedTime()
+//				+ cost.getExpectedTime();
+//		double varianceTime = this.cost.getVarianceTime()
+//				+ cost.getVarianceTime();
+//		int totalServiceTime = this.cost.getTotalServiceTime()
+//				+ cost.getTotalServiceTime();
+//		double delay = this.cost.getDelay() + cost.getDelay();
+//		double earliness = this.cost.getEarliness() + cost.getEarliness();
+//		double vechile = this.cost.getVechile() + cost.getVechile();
+//		double overtime = this.cost.getOvertime() + cost.getOvertime();
+//		this.cost.setDistance(distance);
+//		this.cost.setCapacity(capacity);
+//		this.cost.setExpectedTime(expectedTime);
+//		this.cost.setVarianceTime(varianceTime);
+//		this.cost.setTotalServiceTime(totalServiceTime);
+//		this.cost.setDelay(delay);
+//		this.cost.setEarliness(earliness);
+//		this.cost.setVechile(vechile);
+//		this.cost.setOvertime(overtime);
+//		this.cost.calculateTotalCost();
+//		double obj2 = this.cost.getObjectiveValue(this.coefNu);
+//		calcCapacityViol();
+//		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
+//				obj2 });
+//		// this.objectiveValue = new double[] {obj2 + this.coefNu *
+//		// capacityViol, obj2};
+//	}
+
+//	private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
+//		double distance = this.cost.getDistance() + cost.getDistance()
+//				- prevCost.getDistance();
+//		double capacity = this.cost.getCapacity() + cost.getCapacity()
+//				- prevCost.getCapacity();
+//		double expectedTime = this.cost.getExpectedTime()
+//				+ cost.getExpectedTime() - prevCost.getExpectedTime();
+//		double varianceTime = this.cost.getVarianceTime()
+//				+ cost.getVarianceTime() - prevCost.getVarianceTime();
+//		int totalServiceTime = this.cost.getTotalServiceTime()
+//				+ cost.getTotalServiceTime() - prevCost.getTotalServiceTime();
+//		double delay = this.cost.getDelay() + cost.getDelay()
+//				- prevCost.getDelay();
+//		double earliness = this.cost.getEarliness() + cost.getEarliness()
+//				- prevCost.getEarliness();
+//		double vechile = this.cost.getVechile() + cost.getVechile()
+//				- prevCost.getVechile();
+//		double overtime = this.cost.getOvertime() + cost.getOvertime()
+//				- prevCost.getOvertime();
+//		this.cost.setDistance(distance);
+//		this.cost.setCapacity(capacity);
+//		this.cost.setExpectedTime(expectedTime);
+//		this.cost.setVarianceTime(varianceTime);
+//		this.cost.setTotalServiceTime(totalServiceTime);
+//		this.cost.setDelay(delay);
+//		this.cost.setEarliness(earliness);
+//		this.cost.setVechile(vechile);
+//		this.cost.setOvertime(overtime);
+//		this.cost.calculateTotalCost();
+//		double obj2 = this.cost.getObjectiveValue(this.coefNu);
+//		calcCapacityViol();
+//		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
+//				obj2/*, this.cost.getDistance(), this.coefNu*/ });
+//		// this.objectiveValue = new double[] {obj2 + this.coefNu *
+//		// capacityViol, obj2};
+//	}
+
+	private void evaluateObjectiveValue() {
+		this.cost.clear();
+		this.capacityViol = 0;
 		for (Route route : routes) {
+			this.cost.addCost(route.getCost());
 			double capacViol = route.getCost().getCapacity()
 					- route.getAssignedVehicle().getCapacity();
-			capacityViol += capacViol > 0 ? capacViol : 0;
+			this.capacityViol += capacViol > 0 ? capacViol : 0;
 		}
-	}
-
-	private void evaluateAbsObjectiveValue(Cost cost) {
-		double distance = this.cost.getDistance() + cost.getDistance();
-		double capacity = this.cost.getCapacity() + cost.getCapacity();
-		double expectedTime = this.cost.getExpectedTime()
-				+ cost.getExpectedTime();
-		double varianceTime = this.cost.getVarianceTime()
-				+ cost.getVarianceTime();
-		int totalServiceTime = this.cost.getTotalServiceTime()
-				+ cost.getTotalServiceTime();
-		double delay = this.cost.getDelay() + cost.getDelay();
-		double earliness = this.cost.getEarliness() + cost.getEarliness();
-		double vechile = this.cost.getVechile() + cost.getVechile();
-		double overtime = this.cost.getOvertime() + cost.getOvertime();
-		this.cost.setDistance(distance);
-		this.cost.setCapacity(capacity);
-		this.cost.setExpectedTime(expectedTime);
-		this.cost.setVarianceTime(varianceTime);
-		this.cost.setTotalServiceTime(totalServiceTime);
-		this.cost.setDelay(delay);
-		this.cost.setEarliness(earliness);
-		this.cost.setVechile(vechile);
-		this.cost.setOvertime(overtime);
 		this.cost.calculateTotalCost();
-		double obj2 = this.cost.getObjectiveValue(this.coefNu);
-		calcCapacityViol();
-		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
-				obj2 });
-		// this.objectiveValue = new double[] {obj2 + this.coefNu *
-		// capacityViol, obj2};
+		setObjectiveValue(new double[] { this.cost.getTotalCost() + this.coefNu * this.capacityViol, this.cost.getDistance() });
 	}
-
-	private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
-		double distance = this.cost.getDistance() + cost.getDistance()
-				- prevCost.getDistance();
-		double capacity = this.cost.getCapacity() + cost.getCapacity()
-				- prevCost.getCapacity();
-		double expectedTime = this.cost.getExpectedTime()
-				+ cost.getExpectedTime() - prevCost.getExpectedTime();
-		double varianceTime = this.cost.getVarianceTime()
-				+ cost.getVarianceTime() - prevCost.getVarianceTime();
-		int totalServiceTime = this.cost.getTotalServiceTime()
-				+ cost.getTotalServiceTime() - prevCost.getTotalServiceTime();
-		double delay = this.cost.getDelay() + cost.getDelay()
-				- prevCost.getDelay();
-		double earliness = this.cost.getEarliness() + cost.getEarliness()
-				- prevCost.getEarliness();
-		double vechile = this.cost.getVechile() + cost.getVechile()
-				- prevCost.getVechile();
-		double overtime = this.cost.getOvertime() + cost.getOvertime()
-				- prevCost.getOvertime();
-		this.cost.setDistance(distance);
-		this.cost.setCapacity(capacity);
-		this.cost.setExpectedTime(expectedTime);
-		this.cost.setVarianceTime(varianceTime);
-		this.cost.setTotalServiceTime(totalServiceTime);
-		this.cost.setDelay(delay);
-		this.cost.setEarliness(earliness);
-		this.cost.setVechile(vechile);
-		this.cost.setOvertime(overtime);
-		this.cost.calculateTotalCost();
-		double obj2 = this.cost.getObjectiveValue(this.coefNu);
-		calcCapacityViol();
-		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
-				obj2/*, this.cost.getDistance(), this.coefNu*/ });
-		// this.objectiveValue = new double[] {obj2 + this.coefNu *
-		// capacityViol, obj2};
-	}
-
+	
 	public void updateParameters() {
 		if (this.capacityViol == 0) {
 			this.coefNu = this.coefNu / (1 + this.instance.getCoefPhi());

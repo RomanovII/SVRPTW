@@ -104,6 +104,8 @@ public class MySearchProgram implements TabuSearchListener {
 
 	@Override
 	public void noChangeInValueMoveMade(TabuSearchEvent event) {
+		sol = ((MySolution) tabuSearch.getCurrentSolution());
+		sol.setObjectiveValue(new double[] {sol.getObjectiveValue()[0] * 1.2, sol.getObjectiveValue()[1]});
 	}
 
 	/**

@@ -32,22 +32,22 @@ public class MyRelocateMove implements Move {
 		MySolution sol = (MySolution) solution;
 		Route insertRoute = sol.getRoute(insertRouteNr);
 		Route deleteRoute = sol.getRoute(deleteRouteNr);
-//		sol.evaluateDeleteRoute(deleteRoute, customer, deletePositionIndex);
-//		sol.evaluateInsertRoute(insertRoute, customer, insertPositionIndex);
-		deleteRoute.removeCustomer(deletePositionIndex);
-		insertRoute.addCustomer(customer, insertPositionIndex);
-		sol.evaluateAbsolutely();
+		sol.evaluateDeleteRoute(deleteRoute, customer, deletePositionIndex);
+		sol.evaluateInsertRoute(insertRoute, customer, insertPositionIndex);
+//		deleteRoute.removeCustomer(deletePositionIndex);
+//		insertRoute.addCustomer(customer, insertPositionIndex);
+//		sol.evaluateAbsolutely();
 	} // end operateOn
 
 	public void undoOperation(Solution solution) {
 		MySolution sol = (MySolution) solution;
 		Route insertRoute = sol.getRoute(deleteRouteNr);
 		Route deleteRoute = sol.getRoute(insertRouteNr);
-//		sol.evaluateDeleteRoute(deleteRoute, customer, insertPositionIndex);
-//		sol.evaluateInsertRoute(insertRoute, customer, deletePositionIndex);
-		deleteRoute.removeCustomer(insertPositionIndex);
-		insertRoute.addCustomer(customer, deletePositionIndex);
-		sol.evaluateAbsolutely();
+		sol.evaluateDeleteRoute(deleteRoute, customer, insertPositionIndex);
+		sol.evaluateInsertRoute(insertRoute, customer, deletePositionIndex);
+//		deleteRoute.removeCustomer(insertPositionIndex);
+//		insertRoute.addCustomer(customer, deletePositionIndex);
+//		sol.evaluateAbsolutely();
 	}
 
 	/**

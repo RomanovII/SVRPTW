@@ -20,7 +20,7 @@ public class MyMoveManager implements MoveManager {
 	@Override
 	public Move[] getAllMoves(Solution solution) {
 		MySolution sol = ((MySolution) solution);
-		return getRelocateMoves(sol);
+		return getMoves(sol);
 	}
 
 	private Move[] getMoves(MySolution sol) {

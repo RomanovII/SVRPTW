@@ -52,6 +52,21 @@ public class Cost {
 		this.varianceTime = new Double(cost.getVarianceTime());
 		this.serviceTime = new Integer(cost.getTotalServiceTime());
 	}
+	
+	public void addCost(Cost cost) {
+		this.capacity += cost.getCapacity();
+		this.delay += cost.getDelay();
+		this.earliness += cost.getEarliness();
+		this.distance += cost.getDistance();
+		this.vechile += cost.getVechile();
+		this.overtime += cost.getOvertime();
+		this.servCost += cost.getServiceCost();
+		this.tranCost += cost.getTransportationCost();
+		this.totalCost += cost.getTotalCost();
+		this.expectedTime += cost.getExpectedTime();
+		this.varianceTime += cost.getVarianceTime();
+		this.serviceTime += cost.getTotalServiceTime();
+	}
 
 	public void clear() {
 		this.capacity = 0;
@@ -230,7 +245,4 @@ public class Cost {
 		return true;
 	}
 
-	public double getObjectiveValue(double coefNu) {
-		return this.totalCost;/* + coefNu * capacity; */
-	}
 }
