@@ -3,7 +3,6 @@
 import heneticmethod.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import org.apache.commons.math3.distribution.GammaDistribution;
 /**
  * Instance class holds all the information about the problem, customers, depots, vehicles.
@@ -15,7 +14,6 @@ public class Instance {
 
 	private ArrayList<Customer> sortCustomers 	= new ArrayList<>();
 	private ArrayList<Customer> allCustomers 	= new ArrayList<>();
-	private Random random = new Random();
 	private Parameters parameters;
 	private Depot depot;
 	private int vehiclesNr;
@@ -109,13 +107,6 @@ public class Instance {
 	 */
 	public void setParameters(Parameters parameters) {
 		this.parameters = parameters;
-	}
-
-	/**
-	 * @param random the random to set
-	 */
-	public void setRandom(Random random) {
-		this.random = random;
 	}
 
 	/**

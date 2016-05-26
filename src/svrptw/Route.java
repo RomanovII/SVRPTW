@@ -1,7 +1,5 @@
 package svrptw;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +97,7 @@ public class Route {
 
 	public void setCustomers(ArrayList<Customer> customers) {
 		this.customers = customers;
+		this.evaluate();
 	}
 
 	public void addCustomer(Customer customer) {
@@ -171,31 +170,30 @@ public class Route {
 		double scale = instance.getScale();
 		double shape = instance.getShape();
 		
-		Cost cost = new Cost();
-		cost.setVechile(this.cost.getVechile());
-
+		this.cost.clear();
+		
 		for (int i = 1; i < this.customers.size() - 1; ++i) {
 			preCust = this.customers.get(i - 1);
 			curCust = this.customers.get(i);
 
-			cost.addDistance(instance.getDistance(preCust.getNumber(),
+			this.cost.addDistance(instance.getDistance(preCust.getNumber(),
 					curCust.getNumber()));
-			cost.addCapacity(curCust.getCapacity());
+			this.cost.addCapacity(curCust.getCapacity());
 			shape += instance.getShape()
 					* instance
 							.getTime(preCust.getNumber(), curCust.getNumber())
 					/ scale;
-			cost.addExpectedTime(instance.getTime(preCust.getNumber(),
+			this.cost.addExpectedTime(instance.getTime(preCust.getNumber(),
 					curCust.getNumber()));
-			cost.addVarianceTime(instance.getTime(preCust.getNumber(),
+			this.cost.addVarianceTime(instance.getTime(preCust.getNumber(),
 					curCust.getNumber())
 					* scale);
 
 			/* Earliness */
 			lowerBound = curCust.getStartTw();
-			shiftedLowerBound = lowerBound - cost.getTotalServiceTime();
+			shiftedLowerBound = lowerBound - this.cost.getTotalServiceTime();
 			earlinessTemp = 0;
-			if (lowerBound <= cost.getTotalServiceTime()) {
+			if (lowerBound <= this.cost.getTotalServiceTime()) {
 				earlinessTemp = 0;
 			} else {
 				earlinessTemp = shiftedLowerBound
@@ -205,19 +203,14 @@ public class Route {
 						* instance
 								.getGamma(shape + 1, scale, shiftedLowerBound);
 			}
-			// if (earlinessTemp <= new Double(0)) {
-			// System.out.println("Error 2: Route evaluate. Earliness < 0 : "
-			// + earlinessTemp);
-			// earlinessTemp = 0;
-			// }
-			cost.addEarliness(earlinessTemp);
+			this.cost.addEarliness(earlinessTemp);
 
 			/* Delay */
 			upperBound = curCust.getEndTw();
-			shiftedUpperBound = upperBound - cost.getTotalServiceTime();
+			shiftedUpperBound = upperBound - this.cost.getTotalServiceTime();
 			delayTemp = 0;
-			if (upperBound <= cost.getTotalServiceTime()) {
-				delayTemp = cost.getExpectedTime() - shiftedUpperBound;
+			if (upperBound <= this.cost.getTotalServiceTime()) {
+				delayTemp = this.cost.getExpectedTime() - shiftedUpperBound;
 			} else {
 				delayTemp = shape
 						* scale
@@ -227,22 +220,17 @@ public class Route {
 						* (1 - instance.getGamma(shape, scale,
 								shiftedUpperBound));
 			}
-			// if (delayTemp <= new Double(0)) {
-			// System.out.println("Error 3: Route evaluate. Delay < 0 : "
-			// + delayTemp);
-			// delayTemp = 0;
-			// }
-			cost.addDelay(delayTemp);
+			this.cost.addDelay(delayTemp);
 
-			cost.addTotalServiceTime(new Double(curCust.getServiceDuration()).intValue());
+			this.cost.addTotalServiceTime(new Double(curCust.getServiceDuration()).intValue());
 		}
 		preCust = this.customers.get(this.customers.size() - 2);
 		curCust = this.customers.get(this.customers.size() - 1);
 		/* Overtime */
 		upperBound = curCust.getEndTw();
-		shiftedUpperBound = upperBound - cost.getTotalServiceTime();
-		if (upperBound <= cost.getTotalServiceTime()) {
-			overtimeTemp = cost.getExpectedTime() - shiftedUpperBound;
+		shiftedUpperBound = upperBound - this.cost.getTotalServiceTime();
+		if (upperBound <= this.cost.getTotalServiceTime()) {
+			overtimeTemp = this.cost.getExpectedTime() - shiftedUpperBound;
 		} else {
 			overtimeTemp = shape
 					* scale
@@ -250,25 +238,6 @@ public class Route {
 							shiftedUpperBound)) - shiftedUpperBound
 					* (1 - instance.getGamma(shape, scale, shiftedUpperBound));
 		}
-		cost.setOvertime(overtimeTemp);
-		
-		cost.rangeDelay();
-		cost.rangeEarliness();
-		cost.rangeOvertime();
-		
-		if (new Double(cost.getEarliness() * 1000).intValue() < 0) {
-			System.out.println("Error 4: Route evaluate. Earliness < 0 : "
-					+ cost.getEarliness());
-		}
-		if (new Double(cost.getDelay() * 1000).intValue() < 0) {
-			System.out.println("Error 5: Route evaluate. Delay < 0 : "
-					+ cost.getDelay());
-		}
-		if (new Double(cost.getOvertime() * 1000).intValue() < 0) {
-			System.out.println("Error 6: Route evaluate. Overtime < 0 : "
-					+ cost.getDelay() + " " +  new Double(cost.getOvertime()).intValue());
-		}
-
-		this.cost = cost;
+		this.cost.setOvertime(overtimeTemp);
 	}
 }
