@@ -3,9 +3,6 @@ package tabu;
 //import java.util.Random;
 import java.util.ArrayList;
 
-import javax.swing.plaf.SliderUI;
-import javax.xml.bind.JAXB;
-
 import org.coinor.opents.SolutionAdapter;
 
 import svrptw.Cost;
@@ -15,13 +12,50 @@ import svrptw.MethodListener;
 import svrptw.Route;
 import svrptw.Vehicle;
 
+/**
+ * @author Ilya
+ */
 @SuppressWarnings("serial")
 public class MySolution extends SolutionAdapter {
+	/**
+	 * @uml.property name="instance"
+	 * @uml.associationEnd multiplicity="(1 1)"
+	 */
 	private Instance instance = Instance.getInstance();
+	/**
+	 * @uml.property name="routes"
+	 * @uml.associationEnd multiplicity="(0 -1)" elementType="svrptw.Route"
+	 */
 	private ArrayList<Route> routes;
+	/**
+	 * @uml.property name="cost"
+	 * @uml.associationEnd multiplicity="(1 1)"
+	 */
 	private Cost cost;
+	/**
+	 * @uml.property name="coefNu"
+	 */
 	public double coefNu;
+	/**
+	 * @uml.property name="capacityViol"
+	 */
 	public double capacityViol;
+	/**
+	 * @uml.property name="totalCost"
+	 */
+	public double totalCost;
+	/**
+	 * @uml.property name="tranCost"
+	 */
+	public double tranCost;
+	/**
+	 * @uml.property name="servCost"
+	 */
+	public double servCost;
+	/**
+	 * @uml.property name="vechile"
+	 */
+	public double vechile;
 
 	// public MySolution(/){} //This is needed otherwise java gives random
 	// errors.. YES we love java <3
@@ -63,9 +97,9 @@ public class MySolution extends SolutionAdapter {
 		}
 	}
 
-	public void startSolution() {
+	public void startSolution(double b1, double b2, double b3,
+			MethodListener listener) {
 		ArrayList<Customer> unroutedCustomers = instance.getSortedCustomers();
-
 		for (Customer unroutedCustomer : unroutedCustomers) {
 			int bestNumRoute = -1;
 			int bestNumPosition = -1;
@@ -86,13 +120,12 @@ public class MySolution extends SolutionAdapter {
 							* (newCost.getDelay() - preCost.getDelay())
 							+ instance.getCoefEarliness()
 							* (newCost.getEarliness() - preCost.getEarliness());
-					double newInsertMeasures = m11 + m12 + m13;
+					double newInsertMeasures = b1 * m11 + b2 * m12 + b3 * m13;
 					if (bestInsertMeasures > newInsertMeasures) {
 						bestInsertMeasures = newInsertMeasures;
 						bestNumPosition = pos;
 						bestNumRoute = route.getIndex();
 					}
-
 					route.removeCustomer(pos);
 				}
 			}
@@ -114,6 +147,10 @@ public class MySolution extends SolutionAdapter {
 						+ routes.get(bestNumRoute).getCost().getCapacity()
 						+ ", Insert " + bestNumPosition + " into "
 						+ bestNumRoute + " route.");
+				if (listener != null) {
+					listener.newBestSolutionFound(this.getRoutes(),
+							Double.toString(this.getCost().getDistance()));
+				}
 			}
 		}
 		evaluateAbsolutely();
@@ -134,7 +171,7 @@ public class MySolution extends SolutionAdapter {
 		}
 		evaluateAbsolutely();
 		int routeIndex = 0;
-		ArrayList<Customer> removeList = new ArrayList<>();
+		ArrayList<Customer> removeList = new ArrayList<Customer>();
 
 		while (unroutedCustomers.size() > 0) {
 			if (routeIndex == instance.getVehiclesNr()) {
@@ -175,7 +212,7 @@ public class MySolution extends SolutionAdapter {
 
 		int routeIndex = 0;
 
-		ArrayList<Customer> removeList = new ArrayList<>();
+		ArrayList<Customer> removeList = new ArrayList<Customer>();
 
 		while (unroutedCustomers.size() > 0) {
 			if (routeIndex == instance.getVehiclesNr()) {
@@ -342,9 +379,9 @@ public class MySolution extends SolutionAdapter {
 		route.getCost().setTotalServiceTime(totalServiceTime);
 		route.getCost().setDelay(delay);
 		route.getCost().setEarliness(earliness);
-		route.getCost().setVechile(1);
+		// route.getCost().setVechile(1);
 		route.getCost().setOvertime(overtime);
-		route.getCost().calculateTotalCost();
+		// route.getCost().calculateTotalCost();
 	}
 
 	private void trimRoutes(ArrayList<Route> routes) {
@@ -359,10 +396,18 @@ public class MySolution extends SolutionAdapter {
 		routes.trimToSize();
 	}
 
+	/**
+	 * @param cost
+	 * @uml.property name="cost"
+	 */
 	public void setCost(Cost cost) {
 		this.cost = cost;
 	}
 
+	/**
+	 * @return
+	 * @uml.property name="cost"
+	 */
 	public Cost getCost() {
 		return cost;
 	}
@@ -393,7 +438,8 @@ public class MySolution extends SolutionAdapter {
 			route.evaluate();
 		}
 		evaluateObjectiveValue();
-//		System.out.println("Current Sol: " + this.getObjectiveValue()[0] + " " + this.getObjectiveValue()[1]);
+		// System.out.println("Current Sol: " + this.getObjectiveValue()[0] +
+		// " " + this.getObjectiveValue()[1]);
 	}
 
 	public void evaluateInsertRoute(Route route, Customer customer, int position) {
@@ -406,107 +452,143 @@ public class MySolution extends SolutionAdapter {
 		evaluateObjectiveValue();
 	}
 
-//	private void evaluateAbsRoute(Route route) {
-//		route.evaluate();
-//		evaluateAbsObjectiveValue(route.getCost());
-//	}
+	// private void evaluateAbsRoute(Route route) {
+	// route.evaluate();
+	// evaluateAbsObjectiveValue(route.getCost());
+	// }
 
-//	private void calcCapacityViol() {
-//		capacityViol = 0;
-//		for (Route route : routes) {
-//			double capacViol = route.getCost().getCapacity()
-//					- route.getAssignedVehicle().getCapacity();
-//			capacityViol += capacViol > 0 ? capacViol : 0;
-//		}
-//	}
+	// private void calcCapacityViol() {
+	// capacityViol = 0;
+	// for (Route route : routes) {
+	// double capacViol = route.getCost().getCapacity()
+	// - route.getAssignedVehicle().getCapacity();
+	// capacityViol += capacViol > 0 ? capacViol : 0;
+	// }
+	// }
 
-//	private void evaluateAbsObjectiveValue(Cost cost) {
-//		double distance = this.cost.getDistance() + cost.getDistance();
-//		double capacity = this.cost.getCapacity() + cost.getCapacity();
-//		double expectedTime = this.cost.getExpectedTime()
-//				+ cost.getExpectedTime();
-//		double varianceTime = this.cost.getVarianceTime()
-//				+ cost.getVarianceTime();
-//		int totalServiceTime = this.cost.getTotalServiceTime()
-//				+ cost.getTotalServiceTime();
-//		double delay = this.cost.getDelay() + cost.getDelay();
-//		double earliness = this.cost.getEarliness() + cost.getEarliness();
-//		double vechile = this.cost.getVechile() + cost.getVechile();
-//		double overtime = this.cost.getOvertime() + cost.getOvertime();
-//		this.cost.setDistance(distance);
-//		this.cost.setCapacity(capacity);
-//		this.cost.setExpectedTime(expectedTime);
-//		this.cost.setVarianceTime(varianceTime);
-//		this.cost.setTotalServiceTime(totalServiceTime);
-//		this.cost.setDelay(delay);
-//		this.cost.setEarliness(earliness);
-//		this.cost.setVechile(vechile);
-//		this.cost.setOvertime(overtime);
-//		this.cost.calculateTotalCost();
-//		double obj2 = this.cost.getObjectiveValue(this.coefNu);
-//		calcCapacityViol();
-//		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
-//				obj2 });
-//		// this.objectiveValue = new double[] {obj2 + this.coefNu *
-//		// capacityViol, obj2};
-//	}
+	// private void evaluateAbsObjectiveValue(Cost cost) {
+	// double distance = this.cost.getDistance() + cost.getDistance();
+	// double capacity = this.cost.getCapacity() + cost.getCapacity();
+	// double expectedTime = this.cost.getExpectedTime()
+	// + cost.getExpectedTime();
+	// double varianceTime = this.cost.getVarianceTime()
+	// + cost.getVarianceTime();
+	// int totalServiceTime = this.cost.getTotalServiceTime()
+	// + cost.getTotalServiceTime();
+	// double delay = this.cost.getDelay() + cost.getDelay();
+	// double earliness = this.cost.getEarliness() + cost.getEarliness();
+	// double vechile = this.cost.getVechile() + cost.getVechile();
+	// double overtime = this.cost.getOvertime() + cost.getOvertime();
+	// this.cost.setDistance(distance);
+	// this.cost.setCapacity(capacity);
+	// this.cost.setExpectedTime(expectedTime);
+	// this.cost.setVarianceTime(varianceTime);
+	// this.cost.setTotalServiceTime(totalServiceTime);
+	// this.cost.setDelay(delay);
+	// this.cost.setEarliness(earliness);
+	// this.cost.setVechile(vechile);
+	// this.cost.setOvertime(overtime);
+	// this.cost.calculateTotalCost();
+	// double obj2 = this.cost.getObjectiveValue(this.coefNu);
+	// calcCapacityViol();
+	// setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
+	// obj2 });
+	// // this.objectiveValue = new double[] {obj2 + this.coefNu *
+	// // capacityViol, obj2};
+	// }
 
-//	private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
-//		double distance = this.cost.getDistance() + cost.getDistance()
-//				- prevCost.getDistance();
-//		double capacity = this.cost.getCapacity() + cost.getCapacity()
-//				- prevCost.getCapacity();
-//		double expectedTime = this.cost.getExpectedTime()
-//				+ cost.getExpectedTime() - prevCost.getExpectedTime();
-//		double varianceTime = this.cost.getVarianceTime()
-//				+ cost.getVarianceTime() - prevCost.getVarianceTime();
-//		int totalServiceTime = this.cost.getTotalServiceTime()
-//				+ cost.getTotalServiceTime() - prevCost.getTotalServiceTime();
-//		double delay = this.cost.getDelay() + cost.getDelay()
-//				- prevCost.getDelay();
-//		double earliness = this.cost.getEarliness() + cost.getEarliness()
-//				- prevCost.getEarliness();
-//		double vechile = this.cost.getVechile() + cost.getVechile()
-//				- prevCost.getVechile();
-//		double overtime = this.cost.getOvertime() + cost.getOvertime()
-//				- prevCost.getOvertime();
-//		this.cost.setDistance(distance);
-//		this.cost.setCapacity(capacity);
-//		this.cost.setExpectedTime(expectedTime);
-//		this.cost.setVarianceTime(varianceTime);
-//		this.cost.setTotalServiceTime(totalServiceTime);
-//		this.cost.setDelay(delay);
-//		this.cost.setEarliness(earliness);
-//		this.cost.setVechile(vechile);
-//		this.cost.setOvertime(overtime);
-//		this.cost.calculateTotalCost();
-//		double obj2 = this.cost.getObjectiveValue(this.coefNu);
-//		calcCapacityViol();
-//		setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
-//				obj2/*, this.cost.getDistance(), this.coefNu*/ });
-//		// this.objectiveValue = new double[] {obj2 + this.coefNu *
-//		// capacityViol, obj2};
-//	}
+	// private void evaluateObjectiveValue(Cost cost, Cost prevCost) {
+	// double distance = this.cost.getDistance() + cost.getDistance()
+	// - prevCost.getDistance();
+	// double capacity = this.cost.getCapacity() + cost.getCapacity()
+	// - prevCost.getCapacity();
+	// double expectedTime = this.cost.getExpectedTime()
+	// + cost.getExpectedTime() - prevCost.getExpectedTime();
+	// double varianceTime = this.cost.getVarianceTime()
+	// + cost.getVarianceTime() - prevCost.getVarianceTime();
+	// int totalServiceTime = this.cost.getTotalServiceTime()
+	// + cost.getTotalServiceTime() - prevCost.getTotalServiceTime();
+	// double delay = this.cost.getDelay() + cost.getDelay()
+	// - prevCost.getDelay();
+	// double earliness = this.cost.getEarliness() + cost.getEarliness()
+	// - prevCost.getEarliness();
+	// double vechile = this.cost.getVechile() + cost.getVechile()
+	// - prevCost.getVechile();
+	// double overtime = this.cost.getOvertime() + cost.getOvertime()
+	// - prevCost.getOvertime();
+	// this.cost.setDistance(distance);
+	// this.cost.setCapacity(capacity);
+	// this.cost.setExpectedTime(expectedTime);
+	// this.cost.setVarianceTime(varianceTime);
+	// this.cost.setTotalServiceTime(totalServiceTime);
+	// this.cost.setDelay(delay);
+	// this.cost.setEarliness(earliness);
+	// this.cost.setVechile(vechile);
+	// this.cost.setOvertime(overtime);
+	// this.cost.calculateTotalCost();
+	// double obj2 = this.cost.getObjectiveValue(this.coefNu);
+	// calcCapacityViol();
+	// setObjectiveValue(new double[] { obj2 + this.coefNu * capacityViol,
+	// obj2/*, this.cost.getDistance(), this.coefNu*/ });
+	// // this.objectiveValue = new double[] {obj2 + this.coefNu *
+	// // capacityViol, obj2};
+	// }
+	public void calculateServiceCost() {
+		double coefDelay = instance.getCoefDelay();
+		double coefEarliness = instance.getCoefEarliness();
+		this.servCost = coefDelay * this.cost.getDelay() + coefEarliness
+				* this.cost.getEarliness();
+	}
 
-	private void evaluateObjectiveValue() {
+	public void calculateTransportationCost() {
+		double coefDistance = instance.getCoefDistance();
+		double coefOvertime = instance.getCoefOvertime();
+		double coefVechile = instance.getCoefVechile();
+		this.tranCost = coefDistance * this.cost.getDistance() + coefOvertime
+				* this.cost.getOvertime() + coefVechile * this.vechile;
+	}
+
+	public void calculateTotalCost() {
+		boolean flagTotal = instance.getFlagTotal();
+		double coefServ = instance.getCoefService();
+		double coefTran = instance.getCoefTransportation();
+		double coefRho = instance.getCoefRho();
+		calculateServiceCost();
+		calculateTransportationCost();
+		if (flagTotal) {
+			this.totalCost = coefRho * coefServ * this.servCost + (1 - coefRho)
+					* coefTran * this.tranCost;
+		} else {
+			this.totalCost = this.tranCost;
+		}
+	}
+
+	public void evaluateObjectiveValue() {
 		this.cost.clear();
 		this.capacityViol = 0;
+		this.vechile = 0;
 		for (Route route : routes) {
+			if (route.getCustomersLength() > 2) {
+				this.vechile += 1;
+			}
 			this.cost.addCost(route.getCost());
 			double capacViol = route.getCost().getCapacity()
 					- route.getAssignedVehicle().getCapacity();
 			this.capacityViol += capacViol > 0 ? capacViol : 0;
 		}
-		this.cost.calculateTotalCost();
-		setObjectiveValue(new double[] { this.cost.getTotalCost() + this.coefNu * this.capacityViol, this.cost.getDistance() });
+		this.calculateTotalCost();
+		setObjectiveValue(new double[] {
+				this.totalCost + this.coefNu * this.capacityViol,
+				this.cost.getDistance() });
 	}
-	
+
 	public void updateParameters() {
 		if (this.capacityViol == 0) {
 			this.coefNu = this.coefNu / (1 + this.instance.getCoefPhi());
 		} else {
 			this.coefNu = this.coefNu * (1 + this.instance.getCoefPhi());
 		}
+		evaluateObjectiveValue();
 	}
 
 	public boolean isFeasible() {

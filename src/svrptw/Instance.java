@@ -5,21 +5,48 @@ import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.commons.math3.distribution.GammaDistribution;
 /**
- * Instance class holds all the information about the problem, customers, depots, vehicles.
- * It offers functions to grab all the data from a file print it formated and all the function
- * needed for the initial solution.
+ * Instance class holds all the information about the problem, customers, depots, vehicles. It offers functions to grab all the data from a file print it formated and all the function needed for the initial solution.
  */
 public class Instance {
 	private static Instance instance = new Instance();
 
-	private ArrayList<Customer> sortCustomers 	= new ArrayList<>();
-	private ArrayList<Customer> allCustomers 	= new ArrayList<>();
+	/**
+	 * @uml.property  name="sortCustomers"
+	 */
+	private ArrayList<Customer> sortCustomers 	= new ArrayList<Customer>();
+	/**
+	 * @uml.property  name="allCustomers"
+	 */
+	private ArrayList<Customer> allCustomers 	= new ArrayList<Customer>();
+	/**
+	 * @uml.property  name="parameters"
+	 * @uml.associationEnd  readOnly="true"
+	 */
 	private Parameters parameters;
+	/**
+	 * @uml.property  name="depot"
+	 * @uml.associationEnd  readOnly="true"
+	 */
 	private Depot depot;
+	/**
+	 * @uml.property  name="vehiclesNr"
+	 */
 	private int vehiclesNr;
+	/**
+	 * @uml.property  name="customersNr"
+	 */
 	private int customersNr;
+	/**
+	 * @uml.property  name="distance"
+	 */
 	private int[][] distance;
+	/**
+	 * @uml.property  name="time"
+	 */
 	private int[][] time;
+	/**
+	 * @uml.property  name="vechiclesCapacity"
+	 */
 	private double vechiclesCapacity;
 
 	private Instance(){
@@ -88,22 +115,24 @@ public class Instance {
 	}
 	
 	/**
-	 * @return the vehiclesNr
+	 * @return    the vehiclesNr
+	 * @uml.property  name="vehiclesNr"
 	 */
 	public int getVehiclesNr() {
 		return vehiclesNr;
 	}
 	
 	/**
-	 * @return the parameters
+	 * @return    the parameters
+	 * @uml.property  name="parameters"
 	 */
 	public Parameters getParameters() {
 		return parameters;
 	}
 
 	/**
-	 * @param parameters
-	 *            the parameters to set
+	 * @param parameters    the parameters to set
+	 * @uml.property  name="parameters"
 	 */
 	public void setParameters(Parameters parameters) {
 		this.parameters = parameters;
@@ -117,7 +146,8 @@ public class Instance {
 	}
 	
 	/**
-	 * @return the depot
+	 * @return    the depot
+	 * @uml.property  name="depot"
 	 */
 	public Depot getDepot() {
 		return depot;

@@ -1,19 +1,37 @@
 package svrptw;
 
 /**
- * This class takes calculates duration in hours,minutes,seconds and milliseconds.
- * Usage may be by setting the values of start and end times or duration or by calling
- * start and stop which gets the system time in those moments.
- * @author Banea George
- *
+ * This class takes calculates duration in hours,minutes,seconds and milliseconds. Usage may be by setting the values of start and end times or duration or by calling start and stop which gets the system time in those moments.
+ * @author   Banea George
  */
 public class Duration {
+	/**
+	 * @uml.property  name="startTime"
+	 */
 	private long startTime 		= 0;
+	/**
+	 * @uml.property  name="endTime"
+	 */
 	private long endTime 		= 0;
+	/**
+	 * @uml.property  name="duration"
+	 */
 	private long duration 		= 0;
+	/**
+	 * @uml.property  name="milliSeconds"
+	 */
 	private long milliSeconds 	= 0;
+	/**
+	 * @uml.property  name="seconds"
+	 */
 	private long seconds 		= 0;
+	/**
+	 * @uml.property  name="minutes"
+	 */
 	private long minutes 		= 0;
+	/**
+	 * @uml.property  name="hours"
+	 */
 	private long hours 			= 0;
 
 	/**
@@ -44,7 +62,8 @@ public class Duration {
 
 	/**
 	 * This function sets duration
-	 * @param duration
+	 * @param  duration
+	 * @uml.property  name="duration"
 	 */
 	public void setDuration(long duration){
 		this.duration = duration;
@@ -81,7 +100,8 @@ public class Duration {
 
 	/**
 	 * Sets the start time to the given parameter
-	 * @param startTime
+	 * @param  startTime
+	 * @uml.property  name="startTime"
 	 */
 	public void setStartTime(long startTime){
 		this.startTime = startTime;
@@ -89,7 +109,8 @@ public class Duration {
 
 	/**
 	 * Sets the end time to the given parameter and calculate duration 
-	 * @param endTime
+	 * @param  endTime
+	 * @uml.property  name="endTime"
 	 */
 	public void setEndTime(long endTime){
 		this.endTime = endTime;
@@ -147,28 +168,32 @@ public class Duration {
 		return print.toString();
 	}*/
 	/**
-	 * @return the miliSeconds
+	 * Print duration formated as [HH:MM:SS:ms]
+	 * @uml.property  name="milliSeconds"
 	 */
 	public long getMilliSeconds() {
 		return milliSeconds;
 	}
 
 	/**
-	 * @return the seconds
+	 * @return    the seconds
+	 * @uml.property  name="seconds"
 	 */
 	public long getSeconds() {
 		return seconds;
 	}
 
 	/**
-	 * @return the minutes
+	 * @return    the minutes
+	 * @uml.property  name="minutes"
 	 */
 	public long getMinutes() {
 		return minutes;
 	}
 
 	/**
-	 * @return the hours
+	 * @return    the hours
+	 * @uml.property  name="hours"
 	 */
 	public long getHours() {
 		return hours;

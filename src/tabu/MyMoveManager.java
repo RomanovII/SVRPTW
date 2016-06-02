@@ -10,17 +10,23 @@ import svrptw.Customer;
 import svrptw.Instance;
 import svrptw.Route;
 
+/**
+ * @author   Ilya
+ */
 @SuppressWarnings("serial")
 public class MyMoveManager implements MoveManager {
+	/**
+	 * @uml.property  name="instance"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	private Instance instance = Instance.getInstance();
 
 	public MyMoveManager() {
 	}
 
-	@Override
 	public Move[] getAllMoves(Solution solution) {
 		MySolution sol = ((MySolution) solution);
-		return getMoves(sol);
+		return getRelocateMoves(sol);//getMoves(sol);
 	}
 
 	private Move[] getMoves(MySolution sol) {
@@ -143,46 +149,46 @@ public class MyMoveManager implements MoveManager {
 	private int insertBestTravel(Route route, Customer customerChosenPtr) { // WHAT?
 		double minCost = Double.MAX_VALUE;
 		double tempMinCost = Double.MAX_VALUE;
-		int position = 0;
+		int position = 1;
 
-		if (route.isEmpty()) {
-			return position;
-		}
-
-		// first position
-		/*
-		 * Check if it's possible to put this customer into first position If
-		 * the tw of the new customer is lower than that of the customer in
-		 * position zero update the value tempMinCost and assign time to go from
-		 * depot to current customer + time to go from current customer to
-		 * customer in first position - time to go from depot to customer in
-		 * first position
-		 */
-		tempMinCost = instance.getDistance(route.getDepotNr(),
-				customerChosenPtr.getNumber())
-				+ instance.getDistance(customerChosenPtr.getNumber(),
-						route.getFirstCustomerNr())
-				- instance.getDistance(route.getDepotNr(),
-						route.getFirstCustomerNr());
-		if (minCost > tempMinCost) {
-			minCost = tempMinCost;
-			position = 0;
-		}
-
-		// at the end
-		// If the tw from last customer of the routes inserted is lower than the
-		// current tw
-		// then do the same as above
-		tempMinCost = instance.getDistance(route.getLastCustomerNr(),
-				customerChosenPtr.getNumber())
-				+ instance.getDistance(customerChosenPtr.getNumber(),
-						route.getDepotNr())
-				- instance.getDistance(route.getLastCustomerNr(),
-						route.getDepotNr());
-		if (minCost > tempMinCost) {
-			minCost = tempMinCost;
-			position = route.getCustomersLength();
-		}
+//		if (route.isEmpty()) {
+//			return position;
+//		}
+//
+//		// first position
+//		/*
+//		 * Check if it's possible to put this customer into first position If
+//		 * the tw of the new customer is lower than that of the customer in
+//		 * position zero update the value tempMinCost and assign time to go from
+//		 * depot to current customer + time to go from current customer to
+//		 * customer in first position - time to go from depot to customer in
+//		 * first position
+//		 */
+//		tempMinCost = instance.getDistance(route.getDepotNr(),
+//				customerChosenPtr.getNumber())
+//				+ instance.getDistance(customerChosenPtr.getNumber(),
+//						route.getFirstCustomerNr())
+//				- instance.getDistance(route.getDepotNr(),
+//						route.getFirstCustomerNr());
+//		if (minCost > tempMinCost) {
+//			minCost = tempMinCost;
+//			position = 1;
+//		}
+//
+//		// at the end
+//		// If the tw from last customer of the routes inserted is lower than the
+//		// current tw
+//		// then do the same as above
+//		tempMinCost = instance.getDistance(route.getLastCustomerNr(),
+//				customerChosenPtr.getNumber())
+//				+ instance.getDistance(customerChosenPtr.getNumber(),
+//						route.getDepotNr())
+//				- instance.getDistance(route.getLastCustomerNr(),
+//						route.getDepotNr());
+//		if (minCost > tempMinCost) {
+//			minCost = tempMinCost;
+//			position = route.getCustomersLength();
+//		}
 		// try between each customer
 		// check time windows by pair (preceding and next), comparing them with
 		// ours

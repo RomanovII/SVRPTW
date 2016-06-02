@@ -7,11 +7,27 @@ import svrptw.Route;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * @author   Ilya
+ */
 @SuppressWarnings("serial")
 public class Graphic extends JPanel{
+	/**
+	 * @uml.property  name="size"
+	 */
 	public int size;
+	/**
+	 * @uml.property  name="x"
+	 */
 	public int[] x = new int[101];
+	/**
+	 * @uml.property  name="y"
+	 */
 	public int[] y = new int[101];
+	/**
+	 * @uml.property  name="ans"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="svrptw.Route"
+	 */
 	ArrayList<Route> ans = new ArrayList<Route>();
 	
 	public static int[] convertIntegers(ArrayList<Integer> integers)

@@ -4,23 +4,33 @@ import org.coinor.opents.*;
 
 import svrptw.Instance;
 
+/**
+ * @author   Ilya
+ */
 @SuppressWarnings("serial")
 public class MyTabuList extends ComplexTabuList implements TabuSearchListener{
+	/**
+	 * @uml.property  name="counter"
+	 */
 	private int counter;
+	/**
+	 * @uml.property  name="reset"
+	 */
 	private int reset=7;
+	/**
+	 * @uml.property  name="instance"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	private Instance instance = Instance.getInstance();
 
 	public MyTabuList(int tenure, int[] attrDim) {
 		super(tenure, attrDim.length);
 	}
 
-	@Override
 	public void tabuSearchStarted(TabuSearchEvent arg0) {}
 
-	@Override
 	public void tabuSearchStopped(TabuSearchEvent arg0) {}
 
-	@Override
 	public void newBestSolutionFound(TabuSearchEvent arg0) {
 		counter--;
 		setTenure(getTenure()-2);
@@ -29,10 +39,8 @@ public class MyTabuList extends ComplexTabuList implements TabuSearchListener{
 
 	}
 
-	@Override
 	public void newCurrentSolutionFound(TabuSearchEvent arg0) {}
 
-	@Override
 	public void unimprovingMoveMade(TabuSearchEvent arg0) {
 		counter++;
 		if (counter==20){
@@ -43,9 +51,7 @@ public class MyTabuList extends ComplexTabuList implements TabuSearchListener{
 		}
 	}
 
-	@Override
 	public void improvingMoveMade(TabuSearchEvent arg0) {}
 
-	@Override
 	public void noChangeInValueMoveMade(TabuSearchEvent arg0) {}
 }

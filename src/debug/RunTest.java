@@ -13,14 +13,41 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * @author   Ilya
+ */
 @SuppressWarnings("serial")
 public class RunTest extends JFrame  implements MethodListener {
+	/**
+	 * @uml.property  name="graph"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	Graphic graph;
+	/**
+	 * @uml.property  name="cost"
+	 */
 	TextField cost;
+	/**
+	 * @uml.property  name="size"
+	 */
 	int size = 101;
+	/**
+	 * @uml.property  name="x"
+	 */
 	public int[] x = new int[size];
+	/**
+	 * @uml.property  name="y"
+	 */
 	public int[] y = new int[size];
+	/**
+	 * @uml.property  name="m"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	public Matrix m = new Matrix(size);
+	/**
+	 * @uml.property  name="distances"
+	 * @uml.associationEnd  multiplicity="(0 -1)"
+	 */
 	int distances[][];
 	
 	private void readFile(String filename) {
@@ -91,8 +118,8 @@ public class RunTest extends JFrame  implements MethodListener {
 		readFile(filename);
 		
 		for (int i = 0; i < size; ++i){
-			x[i] = 6 * x[i] + 5;
-			y[i] = 6 * y[i] + 5;
+			x[i] = 8 * x[i] + 5;
+			y[i] = 8 * y[i] + 5;
 		}
 		graph.x = x;
 		graph.y = y;
@@ -119,7 +146,6 @@ public class RunTest extends JFrame  implements MethodListener {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	@Override
 	public void newBestSolutionFound(ArrayList<Route> routes, String info) {
 		// TODO Auto-generated method stub
 		graph.ans = routes;
@@ -127,7 +153,6 @@ public class RunTest extends JFrame  implements MethodListener {
 		this.repaint();
 	}
 
-	@Override
 	public void newCurrentSolutionFound(ArrayList<Route> routes, String info) {
 		// TODO Auto-generated method stub
 		graph.ans = routes;

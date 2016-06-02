@@ -3,6 +3,9 @@ package heneticmethod;
 
 import java.util.ArrayList;
 
+/**
+ * @author   Ilya
+ */
 public class Matrix {
 	public static final int NORMAL_ATM_WINDOW_MODE = 0;
 	public static final int DEFAULT_ATM_WINDOW_MODE = 1;
@@ -12,31 +15,105 @@ public class Matrix {
 	public static final int CARS_OR_ATMS_CONSTRAINT_VIOLATION = 2;
 	public static final int SUMM_CONSTRAINT_VIOLATION = 3;
 
+	/**
+	 * @uml.property  name="eNC"
+	 */
 	public int[] ENC;
+	/**
+	 * @uml.property  name="aTM"
+	 */
 	public String[] ATM;
+	/**
+	 * @uml.property  name="distanceCoeffs"
+	 */
 	public int[][] distanceCoeffs;
+	/**
+	 * @uml.property  name="timeCoeffs"
+	 */
 	public int[][] timeCoeffs;
+	/**
+	 * @uml.property  name="timeWindows"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="heneticmethod.TimeWindow"
+	 */
 	private ArrayList<TimeWindow> timeWindows;
+	/**
+	 * @uml.property  name="riderTimeWindows"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="heneticmethod.RiderTimeWindow"
+	 */
 	private ArrayList<RiderTimeWindow> riderTimeWindows;
+	/**
+	 * @uml.property  name="amountOfMoney"
+	 */
 	public int[] amountOfMoney;
+	/**
+	 * @uml.property  name="serviceTime"
+	 */
 	public int[] serviceTime;
+	/**
+	 * @uml.property  name="maxMoney"
+	 */
 	public int MaxMoney;
+	/**
+	 * @uml.property  name="amountOfCassettes"
+	 */
 	public int[] amountOfCassettes;
+	/**
+	 * @uml.property  name="volumeOneCar"
+	 */
 	public int VolumeOneCar;
+	/**
+	 * @uml.property  name="fixPrice"
+	 */
 	public double FixPrice;
+	/**
+	 * @uml.property  name="lengthPrice"
+	 */
 	public double LengthPrice;
+	/**
+	 * @uml.property  name="maxATMInWay"
+	 */
 	public int MaxATMInWay;
+	/**
+	 * @uml.property  name="maxTime"
+	 */
 	public int MaxTime;
+	/**
+	 * @uml.property  name="maxLength"
+	 */
 	public int MaxLength;
+	/**
+	 * @uml.property  name="depot"
+	 */
 	public String depot;
+	/**
+	 * @uml.property  name="maxCars"
+	 */
 	public int maxCars;
+	/**
+	 * @uml.property  name="atmPrice"
+	 */
 	public double[] AtmPrice;
+	/**
+	 * @uml.property  name="currCode"
+	 */
 	public int currCode;
+	/**
+	 * @uml.property  name="windowMode"
+	 */
 	public int windowMode = Matrix.NORMAL_ATM_WINDOW_MODE;
+	/**
+	 * @uml.property  name="useWindowsFlag"
+	 */
 	public boolean useWindowsFlag;
 
+	/**
+	 * @uml.property  name="type"
+	 */
 	public int type;
 
+	/**
+	 * @uml.property  name="constraintsStatus"
+	 */
 	public int constraintsStatus = Matrix.CONSTRAINTS_OK;
 
 	public Matrix(int size) {

@@ -4,17 +4,40 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * This class stores information about cost of a route or a group of routes. It
- * has total which is the sum of travel, capacityViol, durationViol, twViol.
+ * This class stores information about cost of a route or a group of routes. It has total which is the sum of travel, capacityViol, durationViol, twViol.
  */
 public class Cost {
+	/**
+	 * @uml.property  name="capacity"
+	 */
 	private double capacity;
+	/**
+	 * @uml.property  name="delay"
+	 */
 	private double delay;
+	/**
+	 * @uml.property  name="earliness"
+	 */
 	private double earliness;
+	/**
+	 * @uml.property  name="distance"
+	 */
 	private double distance;
+	/**
+	 * @uml.property  name="overtime"
+	 */
 	private double overtime;
+	/**
+	 * @uml.property  name="expectedTime"
+	 */
 	private double expectedTime;
+	/**
+	 * @uml.property  name="varianceTime"
+	 */
 	private double varianceTime;
+	/**
+	 * @uml.property  name="serviceTime"
+	 */
 	private int serviceTime;
 
 	public Cost() {
@@ -59,6 +82,7 @@ public class Cost {
 		this.distance = 0;
 		this.expectedTime = 0;
 		this.varianceTime = 0;
+		this.serviceTime = 0;
 	}
 
 	private double range(double value) {
@@ -66,10 +90,18 @@ public class Cost {
 				.doubleValue();
 	}
 	
+	/**
+	 * @return
+	 * @uml.property  name="capacity"
+	 */
 	public double getCapacity() {
 		return this.capacity;
 	}
 
+	/**
+	 * @param  capacity
+	 * @uml.property  name="capacity"
+	 */
 	public void setCapacity(double capacity) {
 		this.capacity = capacity;
 	}
@@ -78,10 +110,18 @@ public class Cost {
 		this.capacity += capacity;
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="delay"
+	 */
 	public double getDelay() {
 		return this.delay;
 	}
 
+	/**
+	 * @param  delay
+	 * @uml.property  name="delay"
+	 */
 	public void setDelay(double delay) {
 		this.delay = range(delay);
 	}
@@ -90,10 +130,18 @@ public class Cost {
 		this.delay += range(delay);
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="earliness"
+	 */
 	public double getEarliness() {
 		return this.earliness;
 	}
 
+	/**
+	 * @param  earliness
+	 * @uml.property  name="earliness"
+	 */
 	public void setEarliness(double earliness) {
 		this.earliness = range(earliness);
 	}
@@ -102,18 +150,34 @@ public class Cost {
 		this.earliness += range(earliness);
 	}
 	
+	/**
+	 * @return
+	 * @uml.property  name="overtime"
+	 */
 	public double getOvertime() {
 		return this.overtime;
 	}
 
+	/**
+	 * @param  overtime
+	 * @uml.property  name="overtime"
+	 */
 	public void setOvertime(double overtime) {
 		this.overtime = range(overtime);
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="distance"
+	 */
 	public double getDistance() {
 		return this.distance;
 	}
 
+	/**
+	 * @param  distance
+	 * @uml.property  name="distance"
+	 */
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
@@ -151,10 +215,18 @@ public class Cost {
 //		}
 //	}
 
+	/**
+	 * @return
+	 * @uml.property  name="expectedTime"
+	 */
 	public double getExpectedTime() {
 		return this.expectedTime;
 	}
 
+	/**
+	 * @param  expectedTime
+	 * @uml.property  name="expectedTime"
+	 */
 	public void setExpectedTime(double expectedTime) {
 		this.expectedTime = expectedTime;
 	}
@@ -163,10 +235,18 @@ public class Cost {
 		this.expectedTime += expectedTime;
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="varianceTime"
+	 */
 	public double getVarianceTime() {
 		return this.varianceTime;
 	}
 
+	/**
+	 * @param  varianceTime
+	 * @uml.property  name="varianceTime"
+	 */
 	public void setVarianceTime(double varianceTime) {
 		this.varianceTime = varianceTime;
 	}

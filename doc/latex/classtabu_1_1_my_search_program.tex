@@ -1,0 +1,158 @@
+\hypertarget{classtabu_1_1_my_search_program}{}\section{tabu.\+My\+Search\+Program Class Reference}
+\label{classtabu_1_1_my_search_program}\index{tabu.\+My\+Search\+Program@{tabu.\+My\+Search\+Program}}
+
+
+Inheritance diagram for tabu.\+My\+Search\+Program\+:
+% FIG 0
+
+
+Collaboration diagram for tabu.\+My\+Search\+Program\+:
+% FIG 1
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries My\+Search\+Program} (Solution initial\+Sol, Move\+Manager move\+Manager, Objective\+Function obj\+Func, Tabu\+List tabu\+List, boolean minmax, Print\+Stream out\+Print\+Stream, \hyperlink{interfacesvrptw_1_1_method_listener}{Method\+Listener} listener)\hypertarget{classtabu_1_1_my_search_program_a287138a48f0075fd9875b5e4708f25b5}{}\label{classtabu_1_1_my_search_program_a287138a48f0075fd9875b5e4708f25b5}
+
+\item 
+void {\bfseries improving\+Move\+Made} (Tabu\+Search\+Event event)\hypertarget{classtabu_1_1_my_search_program_ab65cba7779d0d1f03aab886289bfc197}{}\label{classtabu_1_1_my_search_program_ab65cba7779d0d1f03aab886289bfc197}
+
+\item 
+void \hyperlink{classtabu_1_1_my_search_program_abe442593f8244473422d46ebb1d60ced}{new\+Best\+Solution\+Found} (Tabu\+Search\+Event event)
+\item 
+void \hyperlink{classtabu_1_1_my_search_program_a5773c8c5fb1ca9c97b09dc47546ccc3f}{new\+Current\+Solution\+Found} (Tabu\+Search\+Event event)
+\item 
+void {\bfseries no\+Change\+In\+Value\+Move\+Made} (Tabu\+Search\+Event event)\hypertarget{classtabu_1_1_my_search_program_a9d3e352b3e4e11ffa6172f2ce6743571}{}\label{classtabu_1_1_my_search_program_a9d3e352b3e4e11ffa6172f2ce6743571}
+
+\item 
+void \hyperlink{classtabu_1_1_my_search_program_a6050e0fe07c172240fcbe08ba919bbee}{tabu\+Search\+Started} (Tabu\+Search\+Event event)
+\item 
+void {\bfseries tabu\+Search\+Stopped} (Tabu\+Search\+Event event)\hypertarget{classtabu_1_1_my_search_program_a90a708fc04a38e86e9e20031ce9fbed3}{}\label{classtabu_1_1_my_search_program_a90a708fc04a38e86e9e20031ce9fbed3}
+
+\item 
+void {\bfseries unimproving\+Move\+Made} (Tabu\+Search\+Event event)\hypertarget{classtabu_1_1_my_search_program_a01133cb962e6638948337787530b5f19}{}\label{classtabu_1_1_my_search_program_a01133cb962e6638948337787530b5f19}
+
+\item 
+Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ {\bfseries clone\+Routes} (Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ routes)\hypertarget{classtabu_1_1_my_search_program_a8fbf7d634af9dcea20ccc3c823c887b0}{}\label{classtabu_1_1_my_search_program_a8fbf7d634af9dcea20ccc3c823c887b0}
+
+\item 
+Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ {\bfseries get\+Feasible\+Routes} ()\hypertarget{classtabu_1_1_my_search_program_a0085e8cfeb3b5722aff34053274c36f5}{}\label{classtabu_1_1_my_search_program_a0085e8cfeb3b5722aff34053274c36f5}
+
+\item 
+\hyperlink{classtabu_1_1_my_solution}{My\+Solution} {\bfseries get\+Solution} ()\hypertarget{classtabu_1_1_my_search_program_a24e83e8d31f1bf07a8581149234dfbd5}{}\label{classtabu_1_1_my_search_program_a24e83e8d31f1bf07a8581149234dfbd5}
+
+\item 
+void {\bfseries set\+Feasible\+Routes} (Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ feasible\+Routes)\hypertarget{classtabu_1_1_my_search_program_a45fcb1e670da57244c0716c243b37def}{}\label{classtabu_1_1_my_search_program_a45fcb1e670da57244c0716c243b37def}
+
+\item 
+int {\bfseries get\+Number\+Feasible\+Sol} ()\hypertarget{classtabu_1_1_my_search_program_ac88d5ac0cc1823828184590c49892c70}{}\label{classtabu_1_1_my_search_program_ac88d5ac0cc1823828184590c49892c70}
+
+\item 
+void {\bfseries set\+Number\+Feasible\+Sol} (int number\+Feasible\+Sol)\hypertarget{classtabu_1_1_my_search_program_a0ae6ae03d18636d5adb7969b6aafec02}{}\label{classtabu_1_1_my_search_program_a0ae6ae03d18636d5adb7969b6aafec02}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{classtabu_1_1_my_search_program_a48da69244d771d1a311e3d3cba2bcbe0}{get\+Iterations\+Done} ()
+\item 
+static void \hyperlink{classtabu_1_1_my_search_program_a39b435769b35462de1a5a23b0f73e878}{set\+Iterations\+Done} (int iterations\+Done)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Tabu\+Search {\bfseries tabu\+Search}\hypertarget{classtabu_1_1_my_search_program_a011f35be008992fdacc15b8cd3e3fcbe}{}\label{classtabu_1_1_my_search_program_a011f35be008992fdacc15b8cd3e3fcbe}
+
+\item 
+double\mbox{[}$\,$\mbox{]} {\bfseries feasible\+Obj}\hypertarget{classtabu_1_1_my_search_program_ae07456fc533c929c696c73376ea3e661}{}\label{classtabu_1_1_my_search_program_ae07456fc533c929c696c73376ea3e661}
+
+\item 
+Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ {\bfseries feasible\+Routes}\hypertarget{classtabu_1_1_my_search_program_aa3a86e2a368bffaa5d380dd648d36a96}{}\label{classtabu_1_1_my_search_program_aa3a86e2a368bffaa5d380dd648d36a96}
+
+\item 
+\hyperlink{classsvrptw_1_1_cost}{Cost} {\bfseries feasible\+Cost}\hypertarget{classtabu_1_1_my_search_program_a479e9f270726036a8de0073ffa986b99}{}\label{classtabu_1_1_my_search_program_a479e9f270726036a8de0073ffa986b99}
+
+\item 
+Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ {\bfseries best\+Routes}\hypertarget{classtabu_1_1_my_search_program_a672d8729beb1a862bb940e28b1ac07a8}{}\label{classtabu_1_1_my_search_program_a672d8729beb1a862bb940e28b1ac07a8}
+
+\item 
+\hyperlink{classsvrptw_1_1_cost}{Cost} {\bfseries best\+Cost}\hypertarget{classtabu_1_1_my_search_program_aaa48dd00ecaea69bc034a8fe8dd459fb}{}\label{classtabu_1_1_my_search_program_aaa48dd00ecaea69bc034a8fe8dd459fb}
+
+\item 
+Array\+List$<$ \hyperlink{classsvrptw_1_1_route}{Route} $>$ {\bfseries current\+Routes}\hypertarget{classtabu_1_1_my_search_program_a258e32dec20c8547c8ca9abec735551b}{}\label{classtabu_1_1_my_search_program_a258e32dec20c8547c8ca9abec735551b}
+
+\item 
+\hyperlink{classsvrptw_1_1_cost}{Cost} {\bfseries current\+Cost}\hypertarget{classtabu_1_1_my_search_program_ae484612b9f9dc2a4a028b7c39b1f67cb}{}\label{classtabu_1_1_my_search_program_ae484612b9f9dc2a4a028b7c39b1f67cb}
+
+\item 
+int {\bfseries feasible\+Index}\hypertarget{classtabu_1_1_my_search_program_a2c809f9e2e20d84deaff754a72aadbe9}{}\label{classtabu_1_1_my_search_program_a2c809f9e2e20d84deaff754a72aadbe9}
+
+\item 
+int {\bfseries best\+Index}\hypertarget{classtabu_1_1_my_search_program_a076cfddd2fce2e2e3ac7376cde30033d}{}\label{classtabu_1_1_my_search_program_a076cfddd2fce2e2e3ac7376cde30033d}
+
+\item 
+int {\bfseries number\+Feasible\+Sol}\hypertarget{classtabu_1_1_my_search_program_ae9604e83c73d5d883fc40431782f86e3}{}\label{classtabu_1_1_my_search_program_ae9604e83c73d5d883fc40431782f86e3}
+
+\item 
+\hyperlink{classtabu_1_1_my_move_manager}{My\+Move\+Manager} {\bfseries manager}\hypertarget{classtabu_1_1_my_search_program_aede586da83b2b769a1a1146f6c2b95ba}{}\label{classtabu_1_1_my_search_program_aede586da83b2b769a1a1146f6c2b95ba}
+
+\item 
+Decimal\+Format {\bfseries df} = new Decimal\+Format(\char`\"{}\#.\#\#\char`\"{})\hypertarget{classtabu_1_1_my_search_program_a54c073afd2b33605eeb5c201730ee3a5}{}\label{classtabu_1_1_my_search_program_a54c073afd2b33605eeb5c201730ee3a5}
+
+\item 
+int {\bfseries counter}\hypertarget{classtabu_1_1_my_search_program_aec4ea1be1510e769098ffeb60afe2a20}{}\label{classtabu_1_1_my_search_program_aec4ea1be1510e769098ffeb60afe2a20}
+
+\item 
+\hyperlink{interfacesvrptw_1_1_method_listener}{Method\+Listener} {\bfseries external\+Listener}\hypertarget{classtabu_1_1_my_search_program_a05add34336e59876c4e1e87c16223d28}{}\label{classtabu_1_1_my_search_program_a05add34336e59876c4e1e87c16223d28}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\index{tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}!get\+Iterations\+Done@{get\+Iterations\+Done}}
+\index{get\+Iterations\+Done@{get\+Iterations\+Done}!tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}}
+\subsubsection[{\texorpdfstring{get\+Iterations\+Done()}{getIterationsDone()}}]{\setlength{\rightskip}{0pt plus 5cm}static int tabu.\+My\+Search\+Program.\+get\+Iterations\+Done (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classtabu_1_1_my_search_program_a48da69244d771d1a311e3d3cba2bcbe0}{}\label{classtabu_1_1_my_search_program_a48da69244d771d1a311e3d3cba2bcbe0}
+\begin{DoxyReturn}{Returns}
+the iterations\+Done 
+\end{DoxyReturn}
+\index{tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}!new\+Best\+Solution\+Found@{new\+Best\+Solution\+Found}}
+\index{new\+Best\+Solution\+Found@{new\+Best\+Solution\+Found}!tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}}
+\subsubsection[{\texorpdfstring{new\+Best\+Solution\+Found(\+Tabu\+Search\+Event event)}{newBestSolutionFound(TabuSearchEvent event)}}]{\setlength{\rightskip}{0pt plus 5cm}void tabu.\+My\+Search\+Program.\+new\+Best\+Solution\+Found (
+\begin{DoxyParamCaption}
+\item[{Tabu\+Search\+Event}]{event}
+\end{DoxyParamCaption}
+)}\hypertarget{classtabu_1_1_my_search_program_abe442593f8244473422d46ebb1d60ced}{}\label{classtabu_1_1_my_search_program_abe442593f8244473422d46ebb1d60ced}
+when a new best solution event occur save and print it \index{tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}!new\+Current\+Solution\+Found@{new\+Current\+Solution\+Found}}
+\index{new\+Current\+Solution\+Found@{new\+Current\+Solution\+Found}!tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}}
+\subsubsection[{\texorpdfstring{new\+Current\+Solution\+Found(\+Tabu\+Search\+Event event)}{newCurrentSolutionFound(TabuSearchEvent event)}}]{\setlength{\rightskip}{0pt plus 5cm}void tabu.\+My\+Search\+Program.\+new\+Current\+Solution\+Found (
+\begin{DoxyParamCaption}
+\item[{Tabu\+Search\+Event}]{event}
+\end{DoxyParamCaption}
+)}\hypertarget{classtabu_1_1_my_search_program_a5773c8c5fb1ca9c97b09dc47546ccc3f}{}\label{classtabu_1_1_my_search_program_a5773c8c5fb1ca9c97b09dc47546ccc3f}
+when a new current solution is triggered do the following\+: -\/ update the parameters alpha, beta, gamma -\/ check to see if a new better feasible solution is found -\/ if graphics is visible update panel components and repaint \index{tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}!set\+Iterations\+Done@{set\+Iterations\+Done}}
+\index{set\+Iterations\+Done@{set\+Iterations\+Done}!tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}}
+\subsubsection[{\texorpdfstring{set\+Iterations\+Done(int iterations\+Done)}{setIterationsDone(int iterationsDone)}}]{\setlength{\rightskip}{0pt plus 5cm}static void tabu.\+My\+Search\+Program.\+set\+Iterations\+Done (
+\begin{DoxyParamCaption}
+\item[{int}]{iterations\+Done}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classtabu_1_1_my_search_program_a39b435769b35462de1a5a23b0f73e878}{}\label{classtabu_1_1_my_search_program_a39b435769b35462de1a5a23b0f73e878}
+
+\begin{DoxyParams}{Parameters}
+{\em iterations\+Done} & the iterations\+Done to set \\
+\hline
+\end{DoxyParams}
+\index{tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}!tabu\+Search\+Started@{tabu\+Search\+Started}}
+\index{tabu\+Search\+Started@{tabu\+Search\+Started}!tabu\+::\+My\+Search\+Program@{tabu\+::\+My\+Search\+Program}}
+\subsubsection[{\texorpdfstring{tabu\+Search\+Started(\+Tabu\+Search\+Event event)}{tabuSearchStarted(TabuSearchEvent event)}}]{\setlength{\rightskip}{0pt plus 5cm}void tabu.\+My\+Search\+Program.\+tabu\+Search\+Started (
+\begin{DoxyParamCaption}
+\item[{Tabu\+Search\+Event}]{event}
+\end{DoxyParamCaption}
+)}\hypertarget{classtabu_1_1_my_search_program_a6050e0fe07c172240fcbe08ba919bbee}{}\label{classtabu_1_1_my_search_program_a6050e0fe07c172240fcbe08ba919bbee}
+When tabu search starts initialize best cost and routes and feasible cost and routes and also if graphics enabled initialize them and print the initial route 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/tabu/My\+Search\+Program.\+java\end{DoxyCompactItemize}

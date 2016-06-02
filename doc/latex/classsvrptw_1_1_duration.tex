@@ -1,0 +1,181 @@
+\hypertarget{classsvrptw_1_1_duration}{}\section{svrptw.\+Duration Class Reference}
+\label{classsvrptw_1_1_duration}\index{svrptw.\+Duration@{svrptw.\+Duration}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsvrptw_1_1_duration_a884e1e0731c7e821ea5a68ae9f2c816a}{Duration} ()
+\item 
+\hyperlink{classsvrptw_1_1_duration_a0b93fcf045d5f7a2a6ac34871d0a8965}{Duration} (long duration)
+\item 
+void \hyperlink{classsvrptw_1_1_duration_a2e7467de26b557667493ba58b4ab7320}{set\+Duration} (long duration)
+\item 
+void \hyperlink{classsvrptw_1_1_duration_af0596f7491df762b7a52edc51705c1df}{set\+Duration} (long start\+Time, long end\+Time)
+\item 
+void \hyperlink{classsvrptw_1_1_duration_ab259904a807a873bdc94545ffc959dfe}{start} ()
+\item 
+void \hyperlink{classsvrptw_1_1_duration_a2c5297e56fc6884895b384c6860a1512}{stop} ()
+\item 
+void \hyperlink{classsvrptw_1_1_duration_a773959d9b8ce83dd1702ccb2c6337c28}{set\+Start\+Time} (long start\+Time)
+\item 
+void \hyperlink{classsvrptw_1_1_duration_a779171bd93aec0867304660663d30d92}{set\+End\+Time} (long end\+Time)
+\item 
+void \hyperlink{classsvrptw_1_1_duration_a52ea420d400f5c976e5e12f0e94310ac}{reset} ()
+\item 
+long \hyperlink{classsvrptw_1_1_duration_a6d9f52a1f32f642eac321ad39639ce32}{get\+Milli\+Seconds} ()
+\item 
+long \hyperlink{classsvrptw_1_1_duration_a9db7a1d9063b2b9f903f72caefc03663}{get\+Seconds} ()
+\item 
+long \hyperlink{classsvrptw_1_1_duration_a90d4193c8ee7706f483b560156c99c8e}{get\+Minutes} ()
+\item 
+long \hyperlink{classsvrptw_1_1_duration_a1bd63df32f12ea377580dac255e7653f}{get\+Hours} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class takes calculates duration in hours,minutes,seconds and milliseconds. Usage may be by setting the values of start and end times or duration or by calling start and stop which gets the system time in those moments. \begin{DoxyAuthor}{Author}
+Banea George 
+\end{DoxyAuthor}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!Duration@{Duration}}
+\index{Duration@{Duration}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{Duration()}{Duration()}}]{\setlength{\rightskip}{0pt plus 5cm}svrptw.\+Duration.\+Duration (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a884e1e0731c7e821ea5a68ae9f2c816a}{}\label{classsvrptw_1_1_duration_a884e1e0731c7e821ea5a68ae9f2c816a}
+Constructor \index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!Duration@{Duration}}
+\index{Duration@{Duration}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{Duration(long duration)}{Duration(long duration)}}]{\setlength{\rightskip}{0pt plus 5cm}svrptw.\+Duration.\+Duration (
+\begin{DoxyParamCaption}
+\item[{long}]{duration}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a0b93fcf045d5f7a2a6ac34871d0a8965}{}\label{classsvrptw_1_1_duration_a0b93fcf045d5f7a2a6ac34871d0a8965}
+Constructor with duration passed as argument 
+\begin{DoxyParams}{Parameters}
+{\em duration} & \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!get\+Hours@{get\+Hours}}
+\index{get\+Hours@{get\+Hours}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{get\+Hours()}{getHours()}}]{\setlength{\rightskip}{0pt plus 5cm}long svrptw.\+Duration.\+get\+Hours (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a1bd63df32f12ea377580dac255e7653f}{}\label{classsvrptw_1_1_duration_a1bd63df32f12ea377580dac255e7653f}
+\begin{DoxyReturn}{Returns}
+the hours 
+\end{DoxyReturn}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!get\+Milli\+Seconds@{get\+Milli\+Seconds}}
+\index{get\+Milli\+Seconds@{get\+Milli\+Seconds}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{get\+Milli\+Seconds()}{getMilliSeconds()}}]{\setlength{\rightskip}{0pt plus 5cm}long svrptw.\+Duration.\+get\+Milli\+Seconds (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a6d9f52a1f32f642eac321ad39639ce32}{}\label{classsvrptw_1_1_duration_a6d9f52a1f32f642eac321ad39639ce32}
+Print duration formated as \mbox{[}H\+H\+:\+M\+M\+:\+SS\+:ms\mbox{]} Print duration formated as \mbox{[}MM\+:SS\mbox{]} \begin{DoxyReturn}{Returns}
+Print duration formated as hours minutes seconds milliseconds 
+
+the mili\+Seconds 
+\end{DoxyReturn}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!get\+Minutes@{get\+Minutes}}
+\index{get\+Minutes@{get\+Minutes}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{get\+Minutes()}{getMinutes()}}]{\setlength{\rightskip}{0pt plus 5cm}long svrptw.\+Duration.\+get\+Minutes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a90d4193c8ee7706f483b560156c99c8e}{}\label{classsvrptw_1_1_duration_a90d4193c8ee7706f483b560156c99c8e}
+\begin{DoxyReturn}{Returns}
+the minutes 
+\end{DoxyReturn}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!get\+Seconds@{get\+Seconds}}
+\index{get\+Seconds@{get\+Seconds}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{get\+Seconds()}{getSeconds()}}]{\setlength{\rightskip}{0pt plus 5cm}long svrptw.\+Duration.\+get\+Seconds (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a9db7a1d9063b2b9f903f72caefc03663}{}\label{classsvrptw_1_1_duration_a9db7a1d9063b2b9f903f72caefc03663}
+\begin{DoxyReturn}{Returns}
+the seconds 
+\end{DoxyReturn}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!reset@{reset}}
+\index{reset@{reset}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{reset()}{reset()}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+reset (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a52ea420d400f5c976e5e12f0e94310ac}{}\label{classsvrptw_1_1_duration_a52ea420d400f5c976e5e12f0e94310ac}
+Resets all the counters \index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!set\+Duration@{set\+Duration}}
+\index{set\+Duration@{set\+Duration}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{set\+Duration(long duration)}{setDuration(long duration)}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+set\+Duration (
+\begin{DoxyParamCaption}
+\item[{long}]{duration}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a2e7467de26b557667493ba58b4ab7320}{}\label{classsvrptw_1_1_duration_a2e7467de26b557667493ba58b4ab7320}
+This function sets duration 
+\begin{DoxyParams}{Parameters}
+{\em duration} & \\
+\hline
+\end{DoxyParams}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!set\+Duration@{set\+Duration}}
+\index{set\+Duration@{set\+Duration}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{set\+Duration(long start\+Time, long end\+Time)}{setDuration(long startTime, long endTime)}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+set\+Duration (
+\begin{DoxyParamCaption}
+\item[{long}]{start\+Time, }
+\item[{long}]{end\+Time}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_af0596f7491df762b7a52edc51705c1df}{}\label{classsvrptw_1_1_duration_af0596f7491df762b7a52edc51705c1df}
+This function takes start and end time, set them and duration. 
+\begin{DoxyParams}{Parameters}
+{\em start\+Time} & \\
+\hline
+{\em end\+Time} & \\
+\hline
+\end{DoxyParams}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!set\+End\+Time@{set\+End\+Time}}
+\index{set\+End\+Time@{set\+End\+Time}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{set\+End\+Time(long end\+Time)}{setEndTime(long endTime)}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+set\+End\+Time (
+\begin{DoxyParamCaption}
+\item[{long}]{end\+Time}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a779171bd93aec0867304660663d30d92}{}\label{classsvrptw_1_1_duration_a779171bd93aec0867304660663d30d92}
+Sets the end time to the given parameter and calculate duration 
+\begin{DoxyParams}{Parameters}
+{\em end\+Time} & \\
+\hline
+\end{DoxyParams}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!set\+Start\+Time@{set\+Start\+Time}}
+\index{set\+Start\+Time@{set\+Start\+Time}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{set\+Start\+Time(long start\+Time)}{setStartTime(long startTime)}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+set\+Start\+Time (
+\begin{DoxyParamCaption}
+\item[{long}]{start\+Time}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a773959d9b8ce83dd1702ccb2c6337c28}{}\label{classsvrptw_1_1_duration_a773959d9b8ce83dd1702ccb2c6337c28}
+Sets the start time to the given parameter 
+\begin{DoxyParams}{Parameters}
+{\em start\+Time} & \\
+\hline
+\end{DoxyParams}
+\index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!start@{start}}
+\index{start@{start}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{start()}{start()}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+start (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_ab259904a807a873bdc94545ffc959dfe}{}\label{classsvrptw_1_1_duration_ab259904a807a873bdc94545ffc959dfe}
+Sets the start time to the actual current time \index{svrptw\+::\+Duration@{svrptw\+::\+Duration}!stop@{stop}}
+\index{stop@{stop}!svrptw\+::\+Duration@{svrptw\+::\+Duration}}
+\subsubsection[{\texorpdfstring{stop()}{stop()}}]{\setlength{\rightskip}{0pt plus 5cm}void svrptw.\+Duration.\+stop (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classsvrptw_1_1_duration_a2c5297e56fc6884895b384c6860a1512}{}\label{classsvrptw_1_1_duration_a2c5297e56fc6884895b384c6860a1512}
+Sets the end time to the actual current time 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/svrptw/Duration.\+java\end{DoxyCompactItemize}

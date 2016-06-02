@@ -1,0 +1,154 @@
+\hypertarget{classheneticmethod_1_1_matrix}{}\section{heneticmethod.\+Matrix Class Reference}
+\label{classheneticmethod_1_1_matrix}\index{heneticmethod.\+Matrix@{heneticmethod.\+Matrix}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Matrix} (int size)\hypertarget{classheneticmethod_1_1_matrix_a2f844a35c00b54a01b6e7e95221ab3b3}{}\label{classheneticmethod_1_1_matrix_a2f844a35c00b54a01b6e7e95221ab3b3}
+
+\item 
+int {\bfseries get\+Service\+Time} (int num)\hypertarget{classheneticmethod_1_1_matrix_a0eb24fdf65508f397ed738ed2db0a919}{}\label{classheneticmethod_1_1_matrix_a0eb24fdf65508f397ed738ed2db0a919}
+
+\item 
+int {\bfseries get\+Start\+Minute} (int num)\hypertarget{classheneticmethod_1_1_matrix_a0c6325423568cb54761900269eb57213}{}\label{classheneticmethod_1_1_matrix_a0c6325423568cb54761900269eb57213}
+
+\item 
+void {\bfseries add\+Rider\+Time\+Window} (int start, int end)\hypertarget{classheneticmethod_1_1_matrix_a3b2f8391f7e7ec6102f1172007755a9a}{}\label{classheneticmethod_1_1_matrix_a3b2f8391f7e7ec6102f1172007755a9a}
+
+\item 
+void {\bfseries add\+Time\+Window} (int num\+A\+TM, int start\+Work, int end\+Work, boolean emergency\+Window)\hypertarget{classheneticmethod_1_1_matrix_abba4f1eaf7b878c36005147a2acc31bb}{}\label{classheneticmethod_1_1_matrix_abba4f1eaf7b878c36005147a2acc31bb}
+
+\item 
+void {\bfseries adjust\+Emergency\+Time\+Windows} ()\hypertarget{classheneticmethod_1_1_matrix_a57b69ebe02ef371dc77ff08a7b192e68}{}\label{classheneticmethod_1_1_matrix_a57b69ebe02ef371dc77ff08a7b192e68}
+
+\item 
+int {\bfseries get\+Emergency\+Time\+Windows\+Count} ()\hypertarget{classheneticmethod_1_1_matrix_a0e31787609b12529e51afc620f647fda}{}\label{classheneticmethod_1_1_matrix_a0e31787609b12529e51afc620f647fda}
+
+\item 
+void {\bfseries remove\+Atm\+Time\+Windows} ()\hypertarget{classheneticmethod_1_1_matrix_a093570fe1b632c6302318d226e81b2ac}{}\label{classheneticmethod_1_1_matrix_a093570fe1b632c6302318d226e81b2ac}
+
+\item 
+void {\bfseries remove\+Time\+Windows\+For\+Atm} (int num\+A\+TM)\hypertarget{classheneticmethod_1_1_matrix_a7a771067275f581a8edea47930bfb74f}{}\label{classheneticmethod_1_1_matrix_a7a771067275f581a8edea47930bfb74f}
+
+\item 
+boolean {\bfseries is\+In\+Rider\+Window} (int curr\+Time, int time\+Window\+Num)\hypertarget{classheneticmethod_1_1_matrix_a0b9111fdaece548af6cf2450604e77bf}{}\label{classheneticmethod_1_1_matrix_a0b9111fdaece548af6cf2450604e77bf}
+
+\item 
+int {\bfseries ge\+Rider\+Window\+Count} ()\hypertarget{classheneticmethod_1_1_matrix_a9b227e55bfd7fd55282e1db3a4163a29}{}\label{classheneticmethod_1_1_matrix_a9b227e55bfd7fd55282e1db3a4163a29}
+
+\item 
+int {\bfseries get\+Way\+Number} ()\hypertarget{classheneticmethod_1_1_matrix_a90f373564c2f2e132df2a44942b973cd}{}\label{classheneticmethod_1_1_matrix_a90f373564c2f2e132df2a44942b973cd}
+
+\item 
+Array\+List$<$ \hyperlink{classheneticmethod_1_1_rider_time_window}{Rider\+Time\+Window} $>$ {\bfseries get\+Rider\+Time\+Windows} ()\hypertarget{classheneticmethod_1_1_matrix_a815628be73b8074a260bef43dadf2a61}{}\label{classheneticmethod_1_1_matrix_a815628be73b8074a260bef43dadf2a61}
+
+\item 
+\hyperlink{classheneticmethod_1_1_time_window}{Time\+Window} {\bfseries get\+Time\+Window} (int A\+TM)\hypertarget{classheneticmethod_1_1_matrix_a579876a3a311476c35ceb9189360321f}{}\label{classheneticmethod_1_1_matrix_a579876a3a311476c35ceb9189360321f}
+
+\item 
+void {\bfseries set\+Rider\+Time\+Windows} (Array\+List$<$ \hyperlink{classheneticmethod_1_1_rider_time_window}{Rider\+Time\+Window} $>$ rider\+Time\+Windows)\hypertarget{classheneticmethod_1_1_matrix_a0129e6b1197058d764c30507d0778d4d}{}\label{classheneticmethod_1_1_matrix_a0129e6b1197058d764c30507d0778d4d}
+
+\item 
+Array\+List$<$ \hyperlink{classheneticmethod_1_1_time_window}{Time\+Window} $>$ {\bfseries get\+Time\+Windows} ()\hypertarget{classheneticmethod_1_1_matrix_a913da5f89736352e9fd7a26b09ea62ec}{}\label{classheneticmethod_1_1_matrix_a913da5f89736352e9fd7a26b09ea62ec}
+
+\item 
+void {\bfseries set\+Time\+Windows} (Array\+List$<$ \hyperlink{classheneticmethod_1_1_time_window}{Time\+Window} $>$ time\+Windows)\hypertarget{classheneticmethod_1_1_matrix_a665fd9a84a7b10bfa821ef21a01caf0a}{}\label{classheneticmethod_1_1_matrix_a665fd9a84a7b10bfa821ef21a01caf0a}
+
+\item 
+int {\bfseries is\+In\+Window} (int num\+Atm, int curr\+Time)\hypertarget{classheneticmethod_1_1_matrix_a7a2f5e59c00fec3c02ea10f62575df59}{}\label{classheneticmethod_1_1_matrix_a7a2f5e59c00fec3c02ea10f62575df59}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int\mbox{[}$\,$\mbox{]} {\bfseries E\+NC}\hypertarget{classheneticmethod_1_1_matrix_a31e63ee4f7aaaa58ec98330514e7287d}{}\label{classheneticmethod_1_1_matrix_a31e63ee4f7aaaa58ec98330514e7287d}
+
+\item 
+String\mbox{[}$\,$\mbox{]} {\bfseries A\+TM}\hypertarget{classheneticmethod_1_1_matrix_a840b85042f49eaf5a857cb5cfb63842c}{}\label{classheneticmethod_1_1_matrix_a840b85042f49eaf5a857cb5cfb63842c}
+
+\item 
+int\mbox{[}$\,$\mbox{]}\mbox{[}$\,$\mbox{]} {\bfseries distance\+Coeffs}\hypertarget{classheneticmethod_1_1_matrix_a6973659fee69489d3e03e9c0b56608cd}{}\label{classheneticmethod_1_1_matrix_a6973659fee69489d3e03e9c0b56608cd}
+
+\item 
+int\mbox{[}$\,$\mbox{]}\mbox{[}$\,$\mbox{]} {\bfseries time\+Coeffs}\hypertarget{classheneticmethod_1_1_matrix_a6762e800aff57de9a110623eb81ef15d}{}\label{classheneticmethod_1_1_matrix_a6762e800aff57de9a110623eb81ef15d}
+
+\item 
+int\mbox{[}$\,$\mbox{]} {\bfseries amount\+Of\+Money}\hypertarget{classheneticmethod_1_1_matrix_ae480df2273ee8e7d8ece0d57bc42d5d6}{}\label{classheneticmethod_1_1_matrix_ae480df2273ee8e7d8ece0d57bc42d5d6}
+
+\item 
+int\mbox{[}$\,$\mbox{]} {\bfseries service\+Time}\hypertarget{classheneticmethod_1_1_matrix_afd0387af029b774cf6ea591de468acd2}{}\label{classheneticmethod_1_1_matrix_afd0387af029b774cf6ea591de468acd2}
+
+\item 
+int {\bfseries Max\+Money}\hypertarget{classheneticmethod_1_1_matrix_a2ca4fd033874a3b77a0790a9b3dc76dc}{}\label{classheneticmethod_1_1_matrix_a2ca4fd033874a3b77a0790a9b3dc76dc}
+
+\item 
+int\mbox{[}$\,$\mbox{]} {\bfseries amount\+Of\+Cassettes}\hypertarget{classheneticmethod_1_1_matrix_a6259bf93816f81138daa53da5e8514fb}{}\label{classheneticmethod_1_1_matrix_a6259bf93816f81138daa53da5e8514fb}
+
+\item 
+int {\bfseries Volume\+One\+Car}\hypertarget{classheneticmethod_1_1_matrix_a2bfe5cf94be096bd58a2356b8d173cdd}{}\label{classheneticmethod_1_1_matrix_a2bfe5cf94be096bd58a2356b8d173cdd}
+
+\item 
+double {\bfseries Fix\+Price}\hypertarget{classheneticmethod_1_1_matrix_ab2c239a50abbcc662456eb2dc3aa59dd}{}\label{classheneticmethod_1_1_matrix_ab2c239a50abbcc662456eb2dc3aa59dd}
+
+\item 
+double {\bfseries Length\+Price}\hypertarget{classheneticmethod_1_1_matrix_aac0e7de1922fa4b7a1759d18f9ad7a95}{}\label{classheneticmethod_1_1_matrix_aac0e7de1922fa4b7a1759d18f9ad7a95}
+
+\item 
+int {\bfseries Max\+A\+T\+M\+In\+Way}\hypertarget{classheneticmethod_1_1_matrix_af8aa68664be4d796ea5355193d8b5333}{}\label{classheneticmethod_1_1_matrix_af8aa68664be4d796ea5355193d8b5333}
+
+\item 
+int {\bfseries Max\+Time}\hypertarget{classheneticmethod_1_1_matrix_a2aa0c59679224c196b4480c9f6ec8065}{}\label{classheneticmethod_1_1_matrix_a2aa0c59679224c196b4480c9f6ec8065}
+
+\item 
+int {\bfseries Max\+Length}\hypertarget{classheneticmethod_1_1_matrix_abfc5591a662877b2e88417cac5109a87}{}\label{classheneticmethod_1_1_matrix_abfc5591a662877b2e88417cac5109a87}
+
+\item 
+String {\bfseries depot}\hypertarget{classheneticmethod_1_1_matrix_a0c83fa2993121ea2f45a9e5302397c2d}{}\label{classheneticmethod_1_1_matrix_a0c83fa2993121ea2f45a9e5302397c2d}
+
+\item 
+int {\bfseries max\+Cars}\hypertarget{classheneticmethod_1_1_matrix_a12b82868ca6e1bc5ab4a11df342c3222}{}\label{classheneticmethod_1_1_matrix_a12b82868ca6e1bc5ab4a11df342c3222}
+
+\item 
+double\mbox{[}$\,$\mbox{]} {\bfseries Atm\+Price}\hypertarget{classheneticmethod_1_1_matrix_aa4205a765c749e8737592e1163699e1d}{}\label{classheneticmethod_1_1_matrix_aa4205a765c749e8737592e1163699e1d}
+
+\item 
+int {\bfseries curr\+Code}\hypertarget{classheneticmethod_1_1_matrix_a7516af27ea8eb351d90dc073e196840a}{}\label{classheneticmethod_1_1_matrix_a7516af27ea8eb351d90dc073e196840a}
+
+\item 
+int {\bfseries window\+Mode} = Matrix.\+N\+O\+R\+M\+A\+L\+\_\+\+A\+T\+M\+\_\+\+W\+I\+N\+D\+O\+W\+\_\+\+M\+O\+DE\hypertarget{classheneticmethod_1_1_matrix_ade2de43b3340a9a4c05332ffd1c090a6}{}\label{classheneticmethod_1_1_matrix_ade2de43b3340a9a4c05332ffd1c090a6}
+
+\item 
+boolean {\bfseries use\+Windows\+Flag}\hypertarget{classheneticmethod_1_1_matrix_aa5b3e3dc57b016241012f50cc524455d}{}\label{classheneticmethod_1_1_matrix_aa5b3e3dc57b016241012f50cc524455d}
+
+\item 
+int {\bfseries type}\hypertarget{classheneticmethod_1_1_matrix_aa2148fb1883626cb503f36f84b05cf0a}{}\label{classheneticmethod_1_1_matrix_aa2148fb1883626cb503f36f84b05cf0a}
+
+\item 
+int {\bfseries constraints\+Status} = Matrix.\+C\+O\+N\+S\+T\+R\+A\+I\+N\+T\+S\+\_\+\+OK\hypertarget{classheneticmethod_1_1_matrix_a646a08becaf0fcb5174091bbfcfc415c}{}\label{classheneticmethod_1_1_matrix_a646a08becaf0fcb5174091bbfcfc415c}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static final int {\bfseries N\+O\+R\+M\+A\+L\+\_\+\+A\+T\+M\+\_\+\+W\+I\+N\+D\+O\+W\+\_\+\+M\+O\+DE} = 0\hypertarget{classheneticmethod_1_1_matrix_aa5ee2049cbe94af4d59be64c91750aca}{}\label{classheneticmethod_1_1_matrix_aa5ee2049cbe94af4d59be64c91750aca}
+
+\item 
+static final int {\bfseries D\+E\+F\+A\+U\+L\+T\+\_\+\+A\+T\+M\+\_\+\+W\+I\+N\+D\+O\+W\+\_\+\+M\+O\+DE} = 1\hypertarget{classheneticmethod_1_1_matrix_af6837d2085494d2559514daa3bfb63dd}{}\label{classheneticmethod_1_1_matrix_af6837d2085494d2559514daa3bfb63dd}
+
+\item 
+static final int {\bfseries C\+O\+N\+S\+T\+R\+A\+I\+N\+T\+S\+\_\+\+OK} = 0\hypertarget{classheneticmethod_1_1_matrix_ac2ebbe8d17465d44f011556f23ccd38d}{}\label{classheneticmethod_1_1_matrix_ac2ebbe8d17465d44f011556f23ccd38d}
+
+\item 
+static final int {\bfseries T\+I\+M\+E\+\_\+\+C\+O\+N\+S\+T\+R\+A\+I\+N\+T\+\_\+\+V\+I\+O\+L\+A\+T\+I\+ON} = 1\hypertarget{classheneticmethod_1_1_matrix_acf2a47e036f5662e92968eec089139c0}{}\label{classheneticmethod_1_1_matrix_acf2a47e036f5662e92968eec089139c0}
+
+\item 
+static final int {\bfseries C\+A\+R\+S\+\_\+\+O\+R\+\_\+\+A\+T\+M\+S\+\_\+\+C\+O\+N\+S\+T\+R\+A\+I\+N\+T\+\_\+\+V\+I\+O\+L\+A\+T\+I\+ON} = 2\hypertarget{classheneticmethod_1_1_matrix_a792d16382dd5385978fe2de0dcdd14b6}{}\label{classheneticmethod_1_1_matrix_a792d16382dd5385978fe2de0dcdd14b6}
+
+\item 
+static final int {\bfseries S\+U\+M\+M\+\_\+\+C\+O\+N\+S\+T\+R\+A\+I\+N\+T\+\_\+\+V\+I\+O\+L\+A\+T\+I\+ON} = 3\hypertarget{classheneticmethod_1_1_matrix_af3471d2760d6bcedeea7bcaea8377f57}{}\label{classheneticmethod_1_1_matrix_af3471d2760d6bcedeea7bcaea8377f57}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/heneticmethod/Matrix.\+java\end{DoxyCompactItemize}

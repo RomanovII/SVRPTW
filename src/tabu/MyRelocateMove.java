@@ -5,12 +5,31 @@ import org.coinor.opents.*;
 import svrptw.Customer;
 import svrptw.Route;
 
+/**
+ * @author   Ilya
+ */
 @SuppressWarnings("serial")
 public class MyRelocateMove implements Move {
+	/**
+	 * @uml.property  name="customer"
+	 * @uml.associationEnd  multiplicity="(1 1)"
+	 */
 	private Customer customer;
+	/**
+	 * @uml.property  name="deleteRouteNr"
+	 */
 	private int deleteRouteNr;
+	/**
+	 * @uml.property  name="deletePositionIndex"
+	 */
 	private int deletePositionIndex;
+	/**
+	 * @uml.property  name="insertRouteNr"
+	 */
 	private int insertRouteNr;
+	/**
+	 * @uml.property  name="insertPositionIndex"
+	 */
 	private int insertPositionIndex;
 
 	public MyRelocateMove(Customer customer, int deleteRouteNr,
@@ -68,7 +87,8 @@ public class MyRelocateMove implements Move {
 	}
 
 	/**
-	 * @return the customer
+	 * @return    the customer
+	 * @uml.property  name="customer"
 	 */
 	public Customer getCustomer() {
 		return customer;
@@ -82,60 +102,64 @@ public class MyRelocateMove implements Move {
 	}
 
 	/**
-	 * @param customer
-	 *            the customer to set
+	 * @param customer    the customer to set
+	 * @uml.property  name="customer"
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
 
 	/**
-	 * @return the deleteRouteNr
+	 * @return    the deleteRouteNr
+	 * @uml.property  name="deleteRouteNr"
 	 */
 	public int getDeleteRouteNr() {
 		return deleteRouteNr;
 	}
 
 	/**
-	 * @param deleteRouteNr
-	 *            the deleteRouteNr to set
+	 * @param deleteRouteNr    the deleteRouteNr to set
+	 * @uml.property  name="deleteRouteNr"
 	 */
 	public void setDeleteRouteNr(int deleteRouteNr) {
 		this.deleteRouteNr = deleteRouteNr;
 	}
 
 	/**
-	 * @return the deletePositionIndex
+	 * @return    the deletePositionIndex
+	 * @uml.property  name="deletePositionIndex"
 	 */
 	public int getDeletePositionIndex() {
 		return deletePositionIndex;
 	}
 
 	/**
-	 * @param deletePositionIndex
-	 *            the deletePositionIndex to set
+	 * @param deletePositionIndex    the deletePositionIndex to set
+	 * @uml.property  name="deletePositionIndex"
 	 */
 	public void setDeletePositionIndex(int deletePositionIndex) {
 		this.deletePositionIndex = deletePositionIndex;
 	}
 
 	/**
-	 * @return the insertRouteNr
+	 * @return    the insertRouteNr
+	 * @uml.property  name="insertRouteNr"
 	 */
 	public int getInsertRouteNr() {
 		return insertRouteNr;
 	}
 
 	/**
-	 * @param insertRouteNr
-	 *            the insertRouteNr to set
+	 * @param insertRouteNr    the insertRouteNr to set
+	 * @uml.property  name="insertRouteNr"
 	 */
 	public void setInsertRouteNr(int insertRouteNr) {
 		this.insertRouteNr = insertRouteNr;
 	}
 
 	/**
-	 * @return the insertPositionIndex
+	 * @return    the insertPositionIndex
+	 * @uml.property  name="insertPositionIndex"
 	 */
 	public int getInsertPositionIndex() {
 		return insertPositionIndex;
@@ -143,7 +167,7 @@ public class MyRelocateMove implements Move {
 	
     public int hashCode()
     {   
-        return customer.getNumber();
+        return customer.getNumber() + insertPositionIndex * 100 + insertRouteNr * 10000;
     }
 
 //	@Override

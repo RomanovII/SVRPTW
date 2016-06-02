@@ -3,11 +3,33 @@ package svrptw;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author   Ilya
+ */
 public class Route {
+	/**
+	 * @uml.property  name="index"
+	 */
 	private int index; // Number of the route
+	/**
+	 * @uml.property  name="cost"
+	 * @uml.associationEnd  
+	 */
 	private Cost cost; // cost of the route
+	/**
+	 * @uml.property  name="assignedVehicle"
+	 * @uml.associationEnd  
+	 */
 	private Vehicle assignedVehicle; // vehicle assigned to the route
+	/**
+	 * @uml.property  name="depot"
+	 * @uml.associationEnd  
+	 */
 	private Depot depot; // depot the route starts from
+	/**
+	 * @uml.property  name="customers"
+	 * @uml.associationEnd  multiplicity="(0 -1)" elementType="svrptw.Depot"
+	 */
 	private ArrayList<Customer> customers; // list of customers served in the
 											// route
 
@@ -16,7 +38,7 @@ public class Route {
 	 */
 	public Route() {
 		cost = new Cost();
-		customers = new ArrayList<>();
+		customers = new ArrayList<Customer>();
 	}
 
 	public Route(Route route) {
@@ -33,6 +55,10 @@ public class Route {
 		return this.customers.get(index);
 	}
 
+	/**
+	 * @param  depot
+	 * @uml.property  name="depot"
+	 */
 	public void setDepot(Depot depot) {
 		this.depot = depot;
 	}
@@ -46,6 +72,10 @@ public class Route {
 		return this.depot.getNumber();
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="depot"
+	 */
 	public Depot getDepot() {
 		return this.depot;
 	}
@@ -55,7 +85,7 @@ public class Route {
 	}
 
 	public int getFirstCustomerNr() {
-		return getCustomerNr(0);
+		return getCustomerNr(1);
 	}
 
 	public boolean isEmpty() {
@@ -118,6 +148,10 @@ public class Route {
 		this.evaluate();
 	}
 
+	/**
+	 * @param  index
+	 * @uml.property  name="index"
+	 */
 	public void setIndex(int index) {
 		this.index = index;
 	}
@@ -126,14 +160,26 @@ public class Route {
 		this.cost.setCapacity(capacity);
 	}
 
+	/**
+	 * @param  cost
+	 * @uml.property  name="cost"
+	 */
 	public void setCost(Cost cost) {
 		this.cost = cost;
 	}
 
+	/**
+	 * @param  assignedvehicle
+	 * @uml.property  name="assignedVehicle"
+	 */
 	public void setAssignedVehicle(Vehicle assignedvehicle) {
 		this.assignedVehicle = assignedvehicle;
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="assignedVehicle"
+	 */
 	public Vehicle getAssignedVehicle() {
 		return this.assignedVehicle;
 	}
@@ -146,6 +192,10 @@ public class Route {
 		return this.customers;
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="index"
+	 */
 	public int getIndex() {
 		return index;
 	}
@@ -154,6 +204,10 @@ public class Route {
 		return this.customers.size();
 	}
 
+	/**
+	 * @return
+	 * @uml.property  name="cost"
+	 */
 	public Cost getCost() {
 		return this.cost;
 	}

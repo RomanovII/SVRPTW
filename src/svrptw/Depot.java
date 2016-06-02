@@ -3,12 +3,19 @@
 import java.util.ArrayList;
 import svrptw.Customer;
 
+/**
+ * @author   Ilya
+ */
 public class Depot extends Customer {
+	/**
+	 * @uml.property  name="assignedCustomers"
+	 * @uml.associationEnd  multiplicity="(0 -1)" inverse="assignedDepot:svrptw.Customer"
+	 */
 	private ArrayList<Customer> assignedCustomers;
 
 	public Depot() {
 		super();
-		this.assignedCustomers = new ArrayList<>();
+		this.assignedCustomers = new ArrayList<Customer>();
 	}
 	
 	public Depot( Depot copy ) {

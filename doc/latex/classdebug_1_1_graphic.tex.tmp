@@ -1,0 +1,39 @@
+\hypertarget{classdebug_1_1_graphic}{}\section{debug.\+Graphic Class Reference}
+\label{classdebug_1_1_graphic}\index{debug.\+Graphic@{debug.\+Graphic}}
+
+
+Inheritance diagram for debug.\+Graphic\+:
+% FIG 0
+
+
+Collaboration diagram for debug.\+Graphic\+:
+% FIG 1
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int\mbox{[}$\,$\mbox{]} {\bfseries convert\+Integers} (Array\+List$<$ Integer $>$ integers)\hypertarget{classdebug_1_1_graphic_a125fe3e009c84577b79cdaa4099b0e34}{}\label{classdebug_1_1_graphic_a125fe3e009c84577b79cdaa4099b0e34}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int {\bfseries size}\hypertarget{classdebug_1_1_graphic_a8f6f7f6ba5167df525824065380e267b}{}\label{classdebug_1_1_graphic_a8f6f7f6ba5167df525824065380e267b}
+
+\item 
+int\mbox{[}$\,$\mbox{]} {\bfseries x} = new int\mbox{[}101\mbox{]}\hypertarget{classdebug_1_1_graphic_ac214f5a00ebf41bc033c0ea4673e8983}{}\label{classdebug_1_1_graphic_ac214f5a00ebf41bc033c0ea4673e8983}
+
+\item 
+int\mbox{[}$\,$\mbox{]} {\bfseries y} = new int\mbox{[}101\mbox{]}\hypertarget{classdebug_1_1_graphic_a3eaab5bebb53ffd7ce2af2c3eb4e8b16}{}\label{classdebug_1_1_graphic_a3eaab5bebb53ffd7ce2af2c3eb4e8b16}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries paint\+Component} (Graphics gh)\hypertarget{classdebug_1_1_graphic_a01b0f00a7ac7c0afb98f2c4100834f64}{}\label{classdebug_1_1_graphic_a01b0f00a7ac7c0afb98f2c4100834f64}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/debug/Graphic.\+java\end{DoxyCompactItemize}

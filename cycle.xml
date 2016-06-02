@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ASCII"?>
+<options:CycleExplorerData xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:options="options.xmi" level="package">
+  <options interactive="false" level="-1" showScope="InDiagram" properties="ModelFrozen=true;wireOptions=4;Product=eDepend;ComputedContent=true;dependencyFilter=Standard::Derive,Soyatec::Implement,Standard::Instantiate,Standard::Create,Standard::Call,Standard::Send,Soyatec::Access,Soyatec::Import,;displayOptions=1"/>
+  <cycleSets>
+    <groups name="Cycle-1  (2 elements)" size="2">
+      <ids>svrptw/Customer-Soyatec::Import->svrptw/Depot</ids>
+      <ids>svrptw/Depot-Soyatec::Import->svrptw/Customer</ids>
+    </groups>
+  </cycleSets>
+</options:CycleExplorerData>
